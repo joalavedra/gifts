@@ -9,7 +9,7 @@ import {
 import { useWriteContracts, useShowCallsStatus } from 'wagmi/experimental'
 import { useCallback, useState } from 'react';
 import { createWalletClient, custom, parseAbi } from 'viem';
-import { abi } from "@/app/utils/abi";
+import { abi } from "../../app/utils/abi";
 import { polygonAmoy } from 'wagmi/chains';
 import { erc7715Actions } from "viem/experimental";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";

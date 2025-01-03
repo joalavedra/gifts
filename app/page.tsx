@@ -2,7 +2,7 @@
 
 import { Card } from '@/components/ui/card';
 import { motion } from 'framer-motion';
-import { ConnectButton } from '@/components/wallet/ConnectButton';
+import { WalletConnect } from '@/components/wallet/WalletConnect';
 
 export default function WelcomePage() {
   return (
@@ -27,7 +27,7 @@ export default function WelcomePage() {
             <h1 className="text-2xl mb-8 font-mono text-orange-500">GiftQuest</h1>
           </motion.div>
           
-          <ConnectButton />
+          <WalletConnect />
         </Card>
       </motion.div>
     </main>

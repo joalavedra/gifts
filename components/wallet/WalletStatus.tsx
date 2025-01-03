@@ -4,9 +4,9 @@ import { useAccount, useDisconnect } from 'wagmi';
 import { LogOut } from "lucide-react";
 import { Button } from '../ui/button'; 
 import { Card } from '../ui/card';
-import { getExplorerUrl } from "@/lib/wallet";
+import { getExplorerUrl } from "@/lib/wallet/wallet";
 import { WalletActionCard } from "./WalletActionCard";
-import { useWalletActions } from './WalletActions';
+import { useWalletActions } from './WalletAction';
 import { useCallback } from 'react';
 
 export function WalletStatus() {

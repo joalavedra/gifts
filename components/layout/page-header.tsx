@@ -23,3 +23,4 @@ export function PageHeader({ title, backLink = '/app' }: PageHeaderProps) {
       <div className="w-10" />
     </div>
   );
+}

@@ -5,22 +5,32 @@ import { Button } from "../ui/button";
 import { WalletStatus } from "./WalletStatus";
 import { useAccount, useConnect } from "wagmi";
 import { useCallback, useEffect } from "react";
-import { ecosystemWalletInstance } from "@/app/utils/ecosystemWallet";
+import { ecosystemWalletInstance } from "../../app/utils/ecosystemWallet";
 
 export function WalletConnect() {
   useEffect(() => {
-  ecosystemWalletInstance.getEthereumProvider({
-    policy: process.env.NEXT_PUBLIC_POLICY_ID,
-  });
-}, []);
+    ecosystemWalletInstance.getEthereumProvider({
+      policy: process.env.NEXT_PUBLIC_POLICY_ID,
+    });
+  }, []);
+  
   const { isConnected } = useAccount();
   const { connectors, connect } = useConnect();
-  const connectWallet = useCallback(() => {
+  
+  const connectWallet = useCallback(async () => {
+    console.log("Button clicked, attempting to connect...");
     const injectedConnector = connectors.find(
       (connector) => connector.id === 'com.rapidfire.id'
     );
     if (injectedConnector) {
-      connect({ connector: injectedConnector });
+      try {
+        await connect({ connector: injectedConnector });
+        console.log("Connection successful!");
+      } catch (error) {
+        console.error("Connection failed:", error);
+      }
+    } else {
+      console.error("Injected connector not found.");
     }
   }, [connectors, connect]);
 
