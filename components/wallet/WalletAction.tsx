@@ -39,40 +39,6 @@ export function useWalletActions() {
     });
   }, [writeContract]);
 
-  const handleTypedMessage = useCallback(() => {
-    const types = {
-      Mail: [
-        { name: 'from', type: 'Person' },
-        { name: 'to', type: 'Person' },
-        { name: 'content', type: 'string' },
-      ],
-      Person: [
-        { name: 'name', type: 'string' },
-        { name: 'wallet', type: 'address' },
-      ],
-    };
-
-    signTypedData({
-      domain: {
-        chainId: polygonAmoy.id,
-        name: 'Ether Mail',
-        verifyingContract: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC',
-        version: '1',
-      } as const,
-      types,
-      message: {
-        from: { name: 'Alice', wallet: '0x2111111111111111111111111111111111111111' },
-        to: { name: 'Bob', wallet: '0x3111111111111111111111111111111111111111' },
-        content: 'Hello!',
-      },
-      primaryType: 'Mail',
-    });
-  }, [signTypedData]);
-
-  const handlePersonalSign = useCallback(() => {
-    signMessage({ message: 'Hello World' });
-  }, [signMessage]);
-
   const handleSendCalls = useCallback(() => {
     writeContracts({
       contracts: [
@@ -91,37 +57,6 @@ export function useWalletActions() {
       ],
     });
   }, [writeContracts]);
-
-  const handleGrantPermissions = useCallback(async() => {
-    const provider = await connector?.getProvider()
-
-    const privateKey = generatePrivateKey();
-    const accountSession = privateKeyToAccount(privateKey).address;
-    setSessionKey(accountSession);
-    const walletClient = createWalletClient({
-      chain: polygonAmoy, 
-      transport: custom(provider as any),
-    }).extend(erc7715Actions()) 
-    await walletClient.grantPermissions({
-      signer:{
-        type: "account",
-        data:{
-          id: accountSession
-        }
-      },
-      expiry: 60 * 60 * 24,
-      permissions: [
-        {
-          type: 'contract-call',
-          data: {
-            address: '0x2522f4fc9af2e1954a3d13f7a5b2683a00a4543a',
-            calls: []
-          },
-          policies: []
-        }
-      ],
-    });
-  },[])
 
 
   const handleShowCallsStatus = useCallback((identifier?:string) => {
@@ -144,32 +79,6 @@ export function useWalletActions() {
       isConfirmed,
     },
     {
-      icon: MessageSquare,
-      title: "eth_signTypedData_v4",
-      buttonText: "Sign Typed Data",
-      onClick: handleTypedMessage,
-      isLoading: isSigningTyped,
-      error: typedError,
-      payload: typedSignature,
-    },
-    {
-      icon: Key,
-      title: "personal_sign",
-      buttonText: "Sign Message",
-      onClick: handlePersonalSign,
-      isLoading: isSigningPersonal,
-      error: personalError,
-      payload: personalSignature,
-    },
-    {
-      icon: Shield,
-      title: "wallet_grantPermissions",
-      buttonText: "Grant Session",
-      onClick: handleGrantPermissions,
-      isLoading: false,
-      payload: sessionKey ?? undefined,
-    },
-    {
       icon: Boxes,
       title: "wallet_sendCalls",
       buttonText: "Send Batch",
@@ -177,15 +86,6 @@ export function useWalletActions() {
       isLoading: callsPending,
       error: callsError,
       hash: bundleIdentifier as `0x${string}` | undefined,
-    },
-    {
-      icon: Activity,
-      title: "wallet_showCallsStatus",
-      buttonText: "Show Status",
-      onClick: handleShowCallsStatus,
-      isLoading: bundlePending,
-      error: bundleError,
-      input: true
     },
   ];
 

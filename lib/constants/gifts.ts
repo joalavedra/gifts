@@ -41,32 +41,4 @@ export const GIFTS = [
     emoji: '🍪', 
     description: 'Freshly baked cookie'
   },
-  { 
-    id: 7, 
-    name: 'Star Topper', 
-    price: 20, 
-    emoji: '⭐', 
-    description: 'Shining tree topper'
-  },
-  { 
-    id: 8, 
-    name: 'Sleigh Bell', 
-    price: 8, 
-    emoji: '🔔', 
-    description: 'Magical ringing bell'
-  },
-  { 
-    id: 9, 
-    name: 'Mistletoe', 
-    price: 6, 
-    emoji: '🌿', 
-    description: 'Holiday tradition'
-  },
-  { 
-    id: 10, 
-    name: 'Hot Cocoa', 
-    price: 4, 
-    emoji: '☕', 
-    description: 'Warm chocolate drink'
-  }
 ];
