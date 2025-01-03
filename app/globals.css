@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 350 25% 10%;
+  --foreground: 0 0% 100%;
+  --card: 350 25% 15%;
+  --card-foreground: 0 0% 100%;
+  --popover: 350 25% 15%;
+  --popover-foreground: 0 0% 100%;
+  --primary: 350 90% 60%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 350 25% 20%;
+  --secondary-foreground: 0 0% 100%;
+  --muted: 350 25% 25%;
+  --muted-foreground: 0 0% 70%;
+  --accent: 350 90% 60%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 100% 50%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 350 25% 20%;
+  --input: 350 25% 20%;
+  --ring: 350 90% 60%;
+  --radius: 0.75rem;
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  background-image: 
+    radial-gradient(circle at 25px 25px, rgba(255, 255, 255, 0.2) 2%, transparent 0%),
+    radial-gradient(circle at 75px 75px, rgba(255, 255, 255, 0.2) 2%, transparent 0%);
+  background-size: 100px 100px;
+}
+
+.glass-card {
+  background: rgba(35, 25, 30, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.glass-button {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.2s ease-in-out;
+}
+
+.glass-button:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+@keyframes snow {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100vh);
+  }
+}
+
+.snowflake {
+  position: fixed;
+  color: white;
+  font-size: 1em;
+  opacity: 0.8;
+  animation: snow 5s linear infinite;
+}
