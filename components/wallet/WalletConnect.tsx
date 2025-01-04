@@ -25,26 +25,13 @@ export function WalletConnect() {
   const { isConnected } = useAccount();
   const { connectors, connect } = useConnect();
   
-  const connectWallet = useCallback(async () => {
-    console.log("Button clicked, attempting to connect...");
-    console.log("Available connectors:", connectors.map(c => ({ id: c.id, name: c.name })));
-    
-    // Try to find either the specific connector or any injected connector
-    const connector = connectors.find(
-      (c) => c.id === 'com.rapidfire.id' || c.id === 'injected' || c.name.toLowerCase().includes('injected')
+
+  const connectWallet = useCallback(() => {
+    const injectedConnector = connectors.find(
+      (connector) => connector.id === 'com.rapidfire.id'
     );
-    
-    if (connector) {
-      console.log("Found connector:", connector.id, connector.name);
-      try {
-        await connect({ connector });
-        console.log("Connection successful!");
-      } catch (error) {
-        console.error("Connection failed:", error);
-      }
-    } else {
-      console.error("No suitable connector found");
-      console.log("Available connector IDs:", connectors.map(c => c.id));
+    if (injectedConnector) {
+      connect({ connector: injectedConnector });
     }
   }, [connectors, connect]);
 

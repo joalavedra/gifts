@@ -37,6 +37,8 @@
     "@types/react-dom": "^18.2.19",
     "autoprefixer": "^10.4.17",
     "postcss": "^8.4.35",
+    "pino-pretty": "^10.3.1",
     "typescript": "^5.3.3"
-  }
+  },
+  "packageManager": "yarn@1.22.17"
 }
