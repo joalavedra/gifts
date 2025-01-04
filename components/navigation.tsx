@@ -23,7 +23,7 @@ export function Navigation() {
   const router = useRouter();
 
   const menuItems = [
-    { icon: Send, label: 'Send Gift', href: '/send' },
+    { icon: Send, label: 'Send Gift', href: '/app' },
     { icon: Wallet, label: 'Deposit', href: '/deposit' },
     { icon: ArrowUpRight, label: 'Withdraw', href: '/withdraw' },
     { icon: History, label: 'History', href: '/history' },

@@ -1,6 +1,6 @@
 "use client";
 
-import { truncateHash, getExplorerUrl } from "@/lib/wallet/wallet";
+import { truncateHash, getExplorerUrl } from "@/lib/wallet";
 
 interface TransactionStatusProps {
   hash: string;

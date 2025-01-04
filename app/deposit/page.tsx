@@ -1,30 +1,18 @@
 "use client";
 
-import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { ArrowLeft, Copy, Loader2 } from 'lucide-react';
+import { ArrowLeft, Copy } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from "sonner";
 import { motion } from 'framer-motion';
-import { useWallet } from '@/lib/hooks/useWallet';
 
 export default function DepositPage() {
-  const { address, isLoading } = useWallet();
-  const [isCopying, setIsCopying] = useState(false);
+  const depositAddress = '0x1e2cbD72d20B18464B5ccA70...';
 
-  const copyAddress = async () => {
-    if (!address) return;
-    
-    setIsCopying(true);
-    try {
-      await navigator.clipboard.writeText(address);
-      toast.success('Address copied to clipboard');
-    } catch (error) {
-      toast.error('Failed to copy address');
-    } finally {
-      setIsCopying(false);
-    }
+  const copyAddress = () => {
+    navigator.clipboard.writeText(depositAddress);
+    toast.success('Address copied to clipboard');
   };
 
   return (
@@ -63,31 +51,16 @@ export default function DepositPage() {
             <div className="space-y-2">
               <div className="text-sm font-mono">Send USDC (BASE ONLY) to this address:</div>
               <div className="flex gap-2">
-                {isLoading ? (
-                  <div className="flex-1 glass-button rounded-lg p-3 text-sm font-mono">
-                    <Loader2 className="h-4 w-4 animate-spin mx-auto" />
-                  </div>
-                ) : address ? (
-                  <div className="flex-1 glass-button rounded-lg p-3 text-sm font-mono truncate">
-                    {address}
-                  </div>
-                ) : (
-                  <div className="flex-1 glass-button rounded-lg p-3 text-sm font-mono text-red-400">
-                    No wallet connected
-                  </div>
-                )}
+                <div className="flex-1 glass-button rounded-lg p-3 text-sm font-mono truncate">
+                  {depositAddress}
+                </div>
                 <Button 
                   variant="ghost" 
                   size="icon"
                   className="text-white/70 hover:text-white hover:bg-white/10"
                   onClick={copyAddress}
-                  disabled={!address || isCopying}
                 >
-                  {isCopying ? (
-                    <Loader2 className="h-5 w-5 animate-spin" />
-                  ) : (
-                    <Copy className="h-5 w-5" />
-                  )}
+                  <Copy className="h-5 w-5" />
                 </Button>
               </div>
             </div>

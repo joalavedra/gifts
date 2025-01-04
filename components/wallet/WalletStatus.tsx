@@ -4,8 +4,9 @@ import { useAccount, useDisconnect } from 'wagmi';
 import { LogOut } from "lucide-react";
 import { Button } from '../ui/button'; 
 import { Card } from '../ui/card';
-import { getExplorerUrl } from "@/lib/wallet/wallet";
-import { useWalletActions } from './WalletAction';
+import { getExplorerUrl } from "@/lib/wallet";
+import { WalletActionCard } from "./WalletActionCard";
+import { useWalletActions } from './WalletActions';
 import { useCallback } from 'react';
 
 export function WalletStatus() {
@@ -49,6 +50,14 @@ export function WalletStatus() {
         </div>
       </Card>
 
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {actions.map((action) => (
+          <WalletActionCard
+            key={action.title}
+            {...action}
+          />
+        ))}
+      </div>
     </div>
   );
 }
