@@ -4,7 +4,6 @@ import { Space_Mono } from 'next/font/google';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/sonner';
 import { Snowfall } from '@/components/snowfall';
-import { WagmiConfig } from '@/lib/providers/wagmi';
 
 const spaceMono = Space_Mono({ 
   weight: '400',
@@ -31,13 +30,11 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <WagmiConfig>
-            <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-red-500/10 via-background to-background">
-              <Snowfall />
-              {children}
-            </div>
-            <Toaster />
-          </WagmiConfig>
+          <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-red-500/10 via-background to-background">
+            <Snowfall />
+            {children}
+          </div>
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

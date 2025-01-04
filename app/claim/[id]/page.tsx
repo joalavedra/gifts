@@ -1,96 +1,47 @@
 "use client";
 
-import { useEffect, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Gift } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import type { GiftClaim } from '@/lib/types/gift-claim';
-import { GIFTS } from '@/lib/constants/gifts';
+
+const GIFT_DATA = {
+  'test': {
+    name: "Bow",
+    quantity: 1,
+    price: 8,
+    emoji: "🏹"
+  },
+  'abc123': {
+    name: "Master Sword",
+    quantity: 1,
+    price: 15,
+    emoji: "⚔️"
+  }
+};
 
 export default function ClaimPage({ params }: { params: { id: string } }) {
   const router = useRouter();
-  const [claim, setClaim] = useState<GiftClaim | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const giftData = GIFT_DATA[params.id as keyof typeof GIFT_DATA] || GIFT_DATA.test;
 
-  useEffect(() => {
-    async function fetchClaim() {
-      try {
-        const response = await fetch(`/api/claims?id=${params.id}`);
-        const data = await response.json();
-        
-        if (data.success) {
-          setClaim(data.data);
-        } else {
-          router.push(`/claim/${params.id}/claimed`);
-        }
-      } catch (error) {
-        toast.error('Failed to load gift details');
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    fetchClaim();
-  }, [params.id, router]);
-
-  const handleClaim = async () => {
-    setIsLoading(true);
-    try {
-      const response = await fetch('/api/claims/claim', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          id: params.id,
-          claimedBy: 'user-address' // Replace with actual user address
-        })
-      });
-
-      const data = await response.json();
-      
-      if (data.success) {
-        toast.success("Gift claimed successfully!");
-        setTimeout(() => {
-          router.push(`/claim/${params.id}/claimed`);
-        }, 1500);
-      } else {
-        throw new Error(data.error);
-      }
-    } catch (error) {
-      toast.error('Failed to claim gift');
-    } finally {
-      setIsLoading(false);
-    }
+  const handleClaim = () => {
+    toast.success("Gift claimed successfully!");
+    // Simulate a brief delay before redirecting
+    setTimeout(() => {
+      router.push(`/claim/${params.id}/claimed`);
+    }, 1500);
   };
-
-  if (isLoading) {
-    return (
-      <main className="min-h-screen bg-[#E60012] text-white p-4">
-        <div className="max-w-md mx-auto">
-          <Card className="bg-[#ffffff20] border-none p-8 text-center">
-            <div className="animate-pulse">Loading gift details...</div>
-          </Card>
-        </div>
-      </main>
-    );
-  }
-
-  if (!claim) {
-    return router.push(`/claim/${params.id}/claimed`);
-  }
-
-  const gift = GIFTS.find(g => g.id === claim.giftId);
 
   return (
     <main className="min-h-screen bg-[#E60012] text-white p-4">
       <div className="max-w-md mx-auto">
         <Card className="bg-[#ffffff20] border-none p-8 text-center space-y-6">
-          <h1 className="text-xl mb-4">You got {claim.quantity} {gift?.name}!</h1>
+          <h1 className="text-xl mb-4">You got {giftData.quantity} {giftData.name}!</h1>
           
           <div className="text-lg">
-            {gift?.emoji} {claim.quantity} = ${(gift?.price ?? 0) * claim.quantity}
+            {giftData.emoji} {giftData.quantity} = ${giftData.price.toFixed(2)}
           </div>
 
           <div className="text-6xl animate-bounce my-6">
@@ -119,9 +70,8 @@ export default function ClaimPage({ params }: { params: { id: string } }) {
           <Button 
             className="w-full bg-white text-[#E60012] hover:bg-white/90"
             onClick={handleClaim}
-            disabled={isLoading}
           >
-            {isLoading ? 'Claiming...' : 'Claim to enjoy'}
+            Claim to enjoy
           </Button>
 
           <div className="text-xs opacity-80">

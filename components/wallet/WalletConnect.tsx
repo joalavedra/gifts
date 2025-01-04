@@ -5,27 +5,16 @@ import { Button } from "../ui/button";
 import { WalletStatus } from "./WalletStatus";
 import { useAccount, useConnect } from "wagmi";
 import { useCallback, useEffect } from "react";
-import { ecosystemWalletInstance } from "../../app/utils/ecosystemWallet";
+import { ecosystemWalletInstance } from "@/app/utils/ecosystemWallet";
 
 export function WalletConnect() {
   useEffect(() => {
-    // Log if window.ethereum exists
-    console.log('Ethereum provider:', window.ethereum);
-    
-    try {
-      const provider = ecosystemWalletInstance.getEthereumProvider({
-        policy: process.env.NEXT_PUBLIC_POLICY_ID,
-      });
-      console.log("Provider initialized:", provider);
-    } catch (error) {
-      console.error("Failed to initialize provider:", error);
-    }
-  }, []);
-  
+  ecosystemWalletInstance.getEthereumProvider({
+    policy: process.env.NEXT_PUBLIC_POLICY_ID,
+  });
+}, []);
   const { isConnected } = useAccount();
   const { connectors, connect } = useConnect();
-  
-
   const connectWallet = useCallback(() => {
     const injectedConnector = connectors.find(
       (connector) => connector.id === 'com.rapidfire.id'

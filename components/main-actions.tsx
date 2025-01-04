@@ -8,7 +8,6 @@ import Link from 'next/link';
 import type { Gift as GiftType } from '@/app/app/page';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
-import { useNFTActions } from '@/lib/hooks/useNFTActions';
 
 interface MainActionsProps {
   currentGift: GiftType;
@@ -19,50 +18,39 @@ interface MainActionsProps {
 export function MainActions({ currentGift, balance, onPurchase }: MainActionsProps) {
   const router = useRouter();
   const [loading, setLoading] = useState<string | null>(null);
-  const { buyGift, sendGift, redeemGift, isLoading: isContractLoading } = useNFTActions();
 
   const handleAction = async (action: string) => {
-    if (isContractLoading) return;
-    
     setLoading(action);
     
     try {
       switch (action) {
-        case 'buy': {
+        case 'buy':
           const totalCost = currentGift.price * currentGift.quantity;
           if (balance < totalCost) {
             toast.error(`Insufficient balance. Need $${totalCost} but only have $${balance}`);
             return;
           }
-
-          const success = await buyGift(currentGift, currentGift.quantity);
-          if (success && onPurchase(currentGift, currentGift.quantity)) {
+          await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate transaction
+          if (onPurchase(currentGift, currentGift.quantity)) {
             toast.success(`Purchased ${currentGift.quantity} ${currentGift.name} for $${totalCost}`);
           }
           break;
-        }
-
-        case 'send': {
+        case 'send':
           if (currentGift.owned <= 0) {
             toast.error("You don't own any of this item to send");
             return;
           }
           router.push('/send');
           break;
-        }
-
-        case 'redeem': {
+        case 'redeem':
           if (currentGift.owned <= 0) {
             toast.error("You don't own any of this item to redeem");
             return;
           }
-          const success = await redeemGift(currentGift, currentGift.owned);
-          if (success) {
-            const redeemValue = currentGift.price * currentGift.owned;
-            toast.success(`Redeemed successfully! $${redeemValue} added to your balance`);
-          }
+          await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate transaction
+          const redeemValue = currentGift.price * currentGift.owned;
+          toast.success(`Redeemed successfully! $${redeemValue} added to your balance`);
           break;
-        }
       }
     } finally {
       setLoading(null);
@@ -82,7 +70,7 @@ export function MainActions({ currentGift, balance, onPurchase }: MainActionsPro
               variant="secondary" 
               className="glass-button flex flex-col items-center gap-2 h-auto py-4 w-full disabled:opacity-50"
               onClick={() => handleAction(action)}
-              disabled={loading !== null || isContractLoading}
+              disabled={loading !== null}
             >
               {loading === action ? (
                 <Loader2 className="h-5 w-5 animate-spin text-orange-500" />

@@ -1,27 +1,34 @@
 "use client";
 
+import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { PageHeader } from '@/components/layout/page-header';
+import { ArrowLeft, Copy, Share2, Loader2 } from 'lucide-react';
+import Link from 'next/link';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
-import { Copy, Link as LinkIcon, CheckCircle } from 'lucide-react';
-import { useState } from 'react';
-import Link from 'next/link';
 
 export default function SendPage() {
-  const [isCopying, setIsCopying] = useState(false);
-  const claimLink = 'https://giftquest.app/claim/abc123';
+  const [giftLink] = useState('https://pixelpresents.app/claim/abc123');
+  const [loading, setLoading] = useState(false);
 
-  const copyLink = async () => {
-    setIsCopying(true);
+  const copyLink = () => {
+    navigator.clipboard.writeText(giftLink);
+    toast.success('Gift link copied to clipboard!');
+  };
+
+  const shareLink = async () => {
+    setLoading(true);
     try {
-      await navigator.clipboard.writeText(claimLink);
-      toast.success('Gift link copied!');
-    } catch (error) {
-      toast.error('Failed to copy link');
+      await navigator.share({
+        title: 'GiftQuest Gift',
+        text: 'I sent you a gift! Click to claim:',
+        url: giftLink,
+      });
+    } catch (err) {
+      copyLink();
     } finally {
-      setIsCopying(false);
+      setLoading(false);
     }
   };
 
@@ -33,55 +40,66 @@ export default function SendPage() {
         className="max-w-md mx-auto"
       >
         <Card className="glass-card border-none p-8 space-y-6">
-          <PageHeader title="Send Gift" />
-
-          <div className="flex justify-center">
-            <motion.div 
-              className="relative w-32 h-32"
-              animate={{ y: [0, -10, 0] }}
-              transition={{ 
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-            >
-              <img
-                src="/gift-with-wings.png"
-                alt="Flying Gift"
-                className="w-full h-full object-contain"
-              />
-            </motion.div>
-          </div>
-
-          <div className="space-y-4 text-white/80 font-mono">
-            <div className="flex items-center gap-2">
-              <CheckCircle className="h-4 w-4 text-orange-500" />
-              <p className="text-sm">1 good morning sunshine is now claimable</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <Copy className="h-4 w-4 text-orange-500" />
-              <p className="text-sm">Copy link and send to a friend</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <LinkIcon className="h-4 w-4 text-orange-500" />
-              <p className="text-sm">View all your claim links</p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <Button
-              onClick={copyLink}
-              className="glass-button hover:bg-white/20 text-white font-mono"
-            >
-              {isCopying ? 'Copied ✓' : 'Copy link'}
-            </Button>
-            <Link href="/history">
-              <Button
-                className="w-full glass-button hover:bg-white/20 text-white font-mono"
-              >
-                View links
+          <div className="flex items-center justify-between">
+            <Link href="/app">
+              <Button variant="ghost" size="icon" className="text-white/70 hover:text-white hover:bg-white/10">
+                <ArrowLeft className="h-5 w-5" />
               </Button>
             </Link>
+            <h1 className="text-xl font-mono text-orange-500">Send Gift</h1>
+            <div className="w-10" />
+          </div>
+
+          <div className="text-center">
+            <motion.div
+              initial={{ scale: 0.8 }}
+              animate={{ scale: 1 }}
+              transition={{ 
+                type: "spring",
+                stiffness: 260,
+                damping: 20 
+              }}
+              className="text-6xl mb-4"
+            >
+              🎁
+            </motion.div>
+            <p className="text-lg font-mono mb-2">Your gift is ready to send!</p>
+            <p className="text-sm font-mono text-white/60">Share this link with anyone to claim the gift</p>
+          </div>
+
+          <div className="space-y-4">
+            <div className="flex gap-2">
+              <div className="flex-1 glass-button rounded-lg p-3 text-sm font-mono truncate">
+                {giftLink}
+              </div>
+              <Button 
+                variant="ghost" 
+                size="icon"
+                className="text-white/70 hover:text-white hover:bg-white/10"
+                onClick={copyLink}
+              >
+                <Copy className="h-5 w-5" />
+              </Button>
+            </div>
+
+            <Button 
+              className="w-full glass-button hover:bg-white/20 text-white py-6 font-mono gap-3 disabled:opacity-50"
+              onClick={shareLink}
+              disabled={loading}
+            >
+              {loading ? (
+                <Loader2 className="h-5 w-5 animate-spin" />
+              ) : (
+                <>
+                  <Share2 className="h-5 w-5" />
+                  Share Gift Link
+                </>
+              )}
+            </Button>
+          </div>
+
+          <div className="text-sm font-mono text-center text-white/60">
+            The recipient will be able to claim this gift using the link
           </div>
         </Card>
       </motion.div>
