@@ -7,10 +7,10 @@ import { ArrowLeft, Copy, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from "sonner";
 import { motion } from 'framer-motion';
-import { useWallet } from '@/lib/hooks/useWallet';
+import { useAccount } from 'wagmi';
 
 export default function DepositPage() {
-  const { address, isLoading } = useWallet();
+  const { address } = useAccount();
   const [isCopying, setIsCopying] = useState(false);
 
   const copyAddress = async () => {
@@ -36,7 +36,7 @@ export default function DepositPage() {
       >
         <Card className="glass-card border-none p-8 space-y-6">
           <div className="flex items-center justify-between">
-            <Link href="/app">
+            <Link href="/">
               <Button variant="ghost" size="icon" className="text-white/70 hover:text-white hover:bg-white/10">
                 <ArrowLeft className="h-5 w-5" />
               </Button>
@@ -63,19 +63,9 @@ export default function DepositPage() {
             <div className="space-y-2">
               <div className="text-sm font-mono">Send USDC (BASE ONLY) to this address:</div>
               <div className="flex gap-2">
-                {isLoading ? (
-                  <div className="flex-1 glass-button rounded-lg p-3 text-sm font-mono">
-                    <Loader2 className="h-4 w-4 animate-spin mx-auto" />
-                  </div>
-                ) : address ? (
-                  <div className="flex-1 glass-button rounded-lg p-3 text-sm font-mono truncate">
-                    {address}
-                  </div>
-                ) : (
-                  <div className="flex-1 glass-button rounded-lg p-3 text-sm font-mono text-red-400">
-                    No wallet connected
-                  </div>
-                )}
+                <div className="flex-1 glass-button rounded-lg p-3 text-sm font-mono truncate">
+                  {address}
+                </div>
                 <Button 
                   variant="ghost" 
                   size="icon"

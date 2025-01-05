@@ -125,7 +125,7 @@ export default function ClaimPage({ params }: { params: { id: string } }) {
           </Button>
 
           <div className="text-xs opacity-80">
-            <Link href="/app">
+            <Link href="/">
               Want to send your own gifts? Click here
             </Link>
           </div>

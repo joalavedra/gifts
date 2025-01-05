@@ -9,7 +9,7 @@ export function AboutView() {
   return (
     <Card className="bg-[#ffffff20] border-none p-6 space-y-6">
       <div className="flex items-center justify-between">
-        <Link href="/app">
+        <Link href="/">
           <Button variant="ghost" size="icon" className="text-white hover:bg-[#ffffff20]">
             <ArrowLeft className="h-6 w-6" />
           </Button>
