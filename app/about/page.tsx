@@ -16,7 +16,7 @@ export default function AboutPage() {
       >
         <Card className="glass-card border-none p-8 space-y-8">
           <div className="flex items-center justify-between">
-            <Link href="/app">
+            <Link href="/">
               <Button variant="ghost" size="icon" className="text-white/70 hover:text-white hover:bg-white/10">
                 <ArrowLeft className="h-5 w-5" />
               </Button>

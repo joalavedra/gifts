@@ -2,49 +2,82 @@
 
 import { RapidFireLogo } from "../ui/rapid-fire-logo";
 import { Button } from "../ui/button";
-import { WalletStatus } from "./WalletStatus";
-import { useAccount, useConnect } from "wagmi";
-import { useCallback, useEffect } from "react";
+import { useAccount, useConnect, useReadContract } from "wagmi";
+import { useCallback, useEffect, useState } from "react";
 import { ecosystemWalletInstance } from "../../app/utils/ecosystemWallet";
+
+import { GiftDisplay } from '@/components/gift-display';
+import { MainActions } from '@/components/main-actions';
+import { UserBalance } from '@/components/user-balance';
+import { Navigation } from '@/components/navigation';
+import { USDCabi } from "@/app/utils/abi";
+
+export type Gift = {
+  id: number;
+  name: string;
+  price: number;
+  emoji: string;
+  owned: number;
+  quantity: number;
+};
 
 export function WalletConnect() {
   useEffect(() => {
-    // Log if window.ethereum exists
-    console.log('Ethereum provider:', window.ethereum);
-    
-    try {
-      const provider = ecosystemWalletInstance.getEthereumProvider({
-        policy: process.env.NEXT_PUBLIC_POLICY_ID,
-      });
-      console.log("Provider initialized:", provider);
-    } catch (error) {
-      console.error("Failed to initialize provider:", error);
-    }
+    ecosystemWalletInstance.getEthereumProvider({
+      policy: process.env.NEXT_PUBLIC_POLICY_ID,
+    });
   }, []);
-  
-  const { isConnected } = useAccount();
+  const { isConnected, address } = useAccount();
+
+  const { data: balance } = useReadContract({
+    address: "0x41e94eb019c0762f9bfcf9fb1e58725bfb0e7582",
+    functionName: "balanceOf",
+    abi: USDCabi,
+    args: [address],
+  })
+
   const { connectors, connect } = useConnect();
   
-  const connectWallet = useCallback(async () => {
-    console.log("Button clicked, attempting to connect...");
-    console.log("Available connectors:", connectors.map(c => ({ id: c.id, name: c.name })));
-    
-    // Try to find either the specific connector or any injected connector
-    const connector = connectors.find(
-      (c) => c.id === 'com.rapidfire.id' || c.id === 'injected' || c.name.toLowerCase().includes('injected')
-    );
-    
-    if (connector) {
-      console.log("Found connector:", connector.id, connector.name);
-      try {
-        await connect({ connector });
-        console.log("Connection successful!");
-      } catch (error) {
-        console.error("Connection failed:", error);
+    const [currentGift, setCurrentGift] = useState<Gift>({ 
+      id: 1,
+      name: 'Master Sword',
+      price: 15,
+      emoji: '⚔️',
+      owned: 2,
+      quantity: 1
+    });
+    const [inventory, setInventory] = useState<Record<number, number>>({
+      1: 2, // Master Sword: 2
+      3: 1, // Shield: 1
+      4: 3  // Bow: 3
+    });
+  
+    const handleGiftChange = (gift: Gift) => {
+      setCurrentGift({ ...gift, quantity: 1 });
+    };
+  
+    const handlePurchase = (gift: Gift, quantity: number) => {
+      const totalCost = gift.price * quantity;
+      if ((balance as number ?? 0) >= totalCost) {
+        setInventory(prev => ({
+          ...prev,
+          [gift.id]: (prev[gift.id] || 0) + quantity
+        }));
+        setCurrentGift(prev => ({
+          ...prev,
+          owned: (inventory[gift.id] || 0) + quantity
+        }));
+        return true;
       }
-    } else {
-      console.error("No suitable connector found");
-      console.log("Available connector IDs:", connectors.map(c => c.id));
+      return false;
+    };
+
+  const connectWallet = useCallback(() => {
+    const injectedConnector = connectors.find(
+      (connector) => connector.id === 'com.rapidfire.id'
+    );
+    if (injectedConnector) {
+      connect({ connector: injectedConnector });
     }
   }, [connectors, connect]);
 
@@ -59,5 +92,25 @@ export function WalletConnect() {
     );
   }
 
-  return <WalletStatus />;
+  return (
+    <div className='space-y-6'>
+      <header className="flex items-center justify-between p-3 glass-card rounded-2xl">
+        <Navigation />
+        <h1 className="text-sm font-mono text-orange-500">GiftQuest</h1>
+        <UserBalance balance={balance as number ?? 0} />
+      </header>
+
+      <div className="space-y-6">
+        <GiftDisplay 
+          onGiftChange={handleGiftChange} 
+          inventory={inventory}
+        />
+        <MainActions 
+          currentGift={currentGift}
+          balance={balance as number ?? 0}
+          onPurchase={handlePurchase}
+        />
+      </div>
+    </div>
+  );
 }

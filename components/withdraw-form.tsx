@@ -7,10 +7,21 @@ import { ArrowLeft } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import Link from 'next/link';
 import { toast } from "sonner";
+import { useAccount, useReadContract } from 'wagmi';
+import { USDCabi } from '@/app/utils/abi';
 
 export function WithdrawForm() {
   const [address, setAddress] = useState('');
+  const { address: walletAddress } = useAccount();
 
+
+    const { data: balance } = useReadContract({
+      address: "0x41e94eb019c0762f9bfcf9fb1e58725bfb0e7582",
+      functionName: "balanceOf",
+      abi: USDCabi,
+      args: [walletAddress],
+    })
+  
   const handleWithdraw = () => {
     if (!address) {
       toast.error('Please enter a withdrawal address');
@@ -22,7 +33,7 @@ export function WithdrawForm() {
   return (
     <Card className="bg-[#ffffff20] border-none p-6 space-y-6">
       <div className="flex items-center justify-between">
-        <Link href="/app">
+        <Link href="/">
           <Button variant="ghost" size="icon" className="text-white hover:bg-[#ffffff20]">
             <ArrowLeft className="h-6 w-6" />
           </Button>
@@ -32,13 +43,13 @@ export function WithdrawForm() {
       </div>
 
       <div className="text-center space-y-2">
-        <div className="text-4xl font-bold">$50</div>
-        <div className="text-sm opacity-80">Available Balance</div>
+      <div className="text-4xl font-mono">{`$ ${balance ?? 0}`}</div>
+      <div className="text-sm opacity-80">Available Balance</div>
       </div>
 
       <div className="space-y-4">
         <div className="space-y-2">
-          <label className="text-sm">USDC Address (BASE)</label>
+          <label className="text-sm">USDC Address (AMOY POLYGON)</label>
           <Input
             value={address}
             onChange={(e) => setAddress(e.target.value)}

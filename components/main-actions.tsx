@@ -5,10 +5,10 @@ import { ShoppingCart, Send, Gift, Loader2 } from 'lucide-react';
 import { toast } from "sonner";
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import type { Gift as GiftType } from '@/app/app/page';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { useNFTActions } from '@/lib/hooks/useNFTActions';
+import { Gift as GiftType } from './wallet/WalletConnect';
 
 interface MainActionsProps {
   currentGift: GiftType;

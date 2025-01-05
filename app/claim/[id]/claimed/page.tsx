@@ -19,7 +19,7 @@ export default function ClaimedPage() {
             This gift has already been claimed. Create your own account to start sending gifts!
           </p>
 
-          <Link href="/app">
+          <Link href="/">
             <Button 
               className="w-full bg-white text-[#E60012] hover:bg-white/90"
             >

@@ -11,16 +11,25 @@ import {
   Menu
 } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useAccount, useDisconnect } from 'wagmi';
+import { useCallback } from 'react';
 
 export function Navigation() {
-  const router = useRouter();
+  const { disconnect } = useDisconnect();
+  const { connector } = useAccount();
+
+  const handleDisconnectWallet = useCallback(async() => {
+    disconnect();
+    const provider = await connector?.getProvider();
+    (provider as any).disconnect(); // this is needed because wagmi isn't calling the providers disconnect method
+    location.reload();
+  }, [disconnect]);
 
   const menuItems = [
     { icon: Send, label: 'Send Gift', href: '/send' },
@@ -28,7 +37,7 @@ export function Navigation() {
     { icon: ArrowUpRight, label: 'Withdraw', href: '/withdraw' },
     { icon: History, label: 'History', href: '/history' },
     { icon: Info, label: 'About', href: '/about' },
-    { icon: LogOut, label: 'Logout', onClick: () => router.push('/') },
+    { icon: LogOut, label: 'Logout', onClick: () => handleDisconnectWallet() },
   ];
 
   return (

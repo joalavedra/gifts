@@ -4,8 +4,7 @@ import { useState } from 'react';
 import { useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { CONTRACTS } from '@/lib/contracts/config';
 import { toast } from 'sonner';
-import type { Gift } from '@/lib/types/gift';
-import { getProvider } from '@/lib/wallet/config';
+import { Gift } from './useGifts';
 
 export function useNFTActions() {
   const { address } = useAccount();
@@ -19,22 +18,19 @@ export function useNFTActions() {
   ) => {
     try {
       setIsLoading(true);
-      
-      // Get the provider to trigger RapidFire popup
-      const provider = getProvider();
-      
-      // Request account access to ensure wallet is connected
-      await provider.request({ method: 'eth_requestAccounts' });
 
-      const { hash } = await writeContract({
+      const hash = await writeContract({
         ...CONTRACTS.GIFT_TOKEN,
+        // @ts-ignore
         functionName,
+        // @ts-ignore
         args,
         value
       });
 
+      // @ts-ignore
       const receipt = await useWaitForTransactionReceipt({ hash });
-      
+
       if (receipt.status === 'success') {
         toast.success('Transaction successful!');
         return true;
@@ -59,7 +55,7 @@ export function useNFTActions() {
       return false;
     }
 
-    const value = BigInt(gift.price * quantity * 10**6); // Convert to USDC decimals
+    const value = BigInt(gift.price * quantity * 10 ** 6); // Convert to USDC decimals
     return handleTransaction('mint', [address, BigInt(gift.id), BigInt(quantity), '0x'], value);
   };
 

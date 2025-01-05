@@ -1,17 +1,25 @@
 "use client";
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ArrowLeft, Copy, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from "sonner";
 import { motion } from 'framer-motion';
-import { useWallet } from '@/lib/hooks/useWallet';
+import { useAccount, useReadContract } from 'wagmi';
+import { USDCabi } from '../utils/abi';
 
 export default function DepositPage() {
-  const { address, isLoading } = useWallet();
+  const { address } = useAccount();
   const [isCopying, setIsCopying] = useState(false);
+
+  const { data: balance } = useReadContract({
+    address: "0x41e94eb019c0762f9bfcf9fb1e58725bfb0e7582",
+    functionName: "balanceOf",
+    abi: USDCabi,
+    args: [address],
+  })
 
   const copyAddress = async () => {
     if (!address) return;
@@ -36,7 +44,7 @@ export default function DepositPage() {
       >
         <Card className="glass-card border-none p-8 space-y-6">
           <div className="flex items-center justify-between">
-            <Link href="/app">
+            <Link href="/">
               <Button variant="ghost" size="icon" className="text-white/70 hover:text-white hover:bg-white/10">
                 <ArrowLeft className="h-5 w-5" />
               </Button>
@@ -46,7 +54,7 @@ export default function DepositPage() {
           </div>
 
           <div className="text-center space-y-2">
-            <div className="text-4xl font-mono">$50</div>
+            <div className="text-4xl font-mono">{`$ ${balance ?? 0}`}</div>
             <div className="text-sm font-mono text-white/60">Current Balance</div>
           </div>
 
@@ -61,21 +69,11 @@ export default function DepositPage() {
             <div className="text-center text-sm font-mono text-white/60">OR</div>
 
             <div className="space-y-2">
-              <div className="text-sm font-mono">Send USDC (BASE ONLY) to this address:</div>
+              <div className="text-sm font-mono">Send USDC (AMOY POLYGON ONLY) to this address:</div>
               <div className="flex gap-2">
-                {isLoading ? (
-                  <div className="flex-1 glass-button rounded-lg p-3 text-sm font-mono">
-                    <Loader2 className="h-4 w-4 animate-spin mx-auto" />
-                  </div>
-                ) : address ? (
-                  <div className="flex-1 glass-button rounded-lg p-3 text-sm font-mono truncate">
-                    {address}
-                  </div>
-                ) : (
-                  <div className="flex-1 glass-button rounded-lg p-3 text-sm font-mono text-red-400">
-                    No wallet connected
-                  </div>
-                )}
+                <div className="flex-1 glass-button rounded-lg p-3 text-sm font-mono truncate">
+                  {address}
+                </div>
                 <Button 
                   variant="ghost" 
                   size="icon"
