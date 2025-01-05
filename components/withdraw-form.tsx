@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { toast } from "sonner";
 import { useAccount, useReadContract } from 'wagmi';
 import { USDCabi } from '@/app/utils/abi';
+import { formatUnits } from 'viem';
 
 export function WithdrawForm() {
   const [address, setAddress] = useState('');
@@ -43,7 +44,7 @@ export function WithdrawForm() {
       </div>
 
       <div className="text-center space-y-2">
-      <div className="text-4xl font-mono">{`$ ${balance ?? 0}`}</div>
+      <div className="text-4xl font-mono">{`$ ${balance ? formatUnits(balance as bigint, 6):0}`}</div>
       <div className="text-sm opacity-80">Available Balance</div>
       </div>
 

@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { motion } from 'framer-motion';
 import { useAccount, useReadContract } from 'wagmi';
 import { USDCabi } from '../utils/abi';
+import { formatUnits } from 'viem';
 
 export default function WithdrawPage() {
   const [address, setAddress] = useState('');
@@ -53,7 +54,7 @@ export default function WithdrawPage() {
           </div>
 
           <div className="text-center space-y-2">
-          <div className="text-4xl font-mono">{`$ ${balance ?? 0}`}</div>
+            <div className="text-4xl font-mono">{`$ ${balance ? formatUnits(balance as bigint, 6):0}`}</div>
           <div className="text-sm font-mono text-white/60">Available Balance</div>
           </div>
 

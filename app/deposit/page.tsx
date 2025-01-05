@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { motion } from 'framer-motion';
 import { useAccount, useReadContract } from 'wagmi';
 import { USDCabi } from '../utils/abi';
+import { formatUnits } from 'viem';
 
 export default function DepositPage() {
   const { address } = useAccount();
@@ -20,7 +21,6 @@ export default function DepositPage() {
     abi: USDCabi,
     args: [address],
   })
-
   const copyAddress = async () => {
     if (!address) return;
     
@@ -54,7 +54,7 @@ export default function DepositPage() {
           </div>
 
           <div className="text-center space-y-2">
-            <div className="text-4xl font-mono">{`$ ${balance ?? 0}`}</div>
+            <div className="text-4xl font-mono">{`$ ${balance ? formatUnits(balance as bigint, 6):0}`}</div>
             <div className="text-sm font-mono text-white/60">Current Balance</div>
           </div>
 

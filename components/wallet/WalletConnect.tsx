@@ -97,7 +97,7 @@ export function WalletConnect() {
       <header className="flex items-center justify-between p-3 glass-card rounded-2xl">
         <Navigation />
         <h1 className="text-sm font-mono text-orange-500">GiftQuest</h1>
-        <UserBalance balance={balance as number ?? 0} />
+        <UserBalance balance={balance as bigint ?? 0} />
       </header>
 
       <div className="space-y-6">
@@ -107,7 +107,7 @@ export function WalletConnect() {
         />
         <MainActions 
           currentGift={currentGift}
-          balance={balance as number ?? 0}
+          balance={balance as bigint ?? 0}
           onPurchase={handlePurchase}
         />
       </div>

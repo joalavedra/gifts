@@ -12,7 +12,7 @@ import { Gift as GiftType } from './wallet/WalletConnect';
 
 interface MainActionsProps {
   currentGift: GiftType;
-  balance: number;
+  balance: bigint;
   onPurchase: (gift: GiftType, quantity: number) => boolean;
 }
 
