@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { useNFTActions } from '@/lib/hooks/useNFTActions';
-import { Gift as GiftType } from './wallet/WalletConnect';
+import { Gift as GiftType } from '@/app/page';
 
 interface MainActionsProps {
   currentGift: GiftType;
