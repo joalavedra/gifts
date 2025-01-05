@@ -23,7 +23,7 @@ export default function HistoryPage() {
       emoji: '😊',
       quantity: 1, 
       timestamp: 'Dec 23, 07:13pm',
-      link: 'https://giftquest.app/claim/abc123' 
+      link: 'https://giftquest1.vercel.app/claim/abc123' 
     }
   ]);
 

@@ -1,12 +1,11 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Gift } from '@/app/page';
-
 
 const GIFTS: Omit<Gift, 'quantity'>[] = [
   { id: 1, name: 'Master Sword', price: 15, emoji: '⚔️', owned: 2 },
@@ -29,38 +28,40 @@ interface GiftDisplayProps {
 export function GiftDisplay({ onGiftChange, inventory }: GiftDisplayProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const currentGift = {
-    ...GIFTS[currentIndex],
-    owned: inventory[GIFTS[currentIndex].id] || 0
+
+  // Update the current gift with the correct inventory amount
+  const getCurrentGift = (index: number): Gift => {
+    const baseGift = GIFTS[index];
+    return {
+      ...baseGift,
+      owned: inventory[baseGift.id] || 0,
+      quantity: quantity
+    };
   };
 
+  // Effect to sync gift changes with parent
+  useEffect(() => {
+    onGiftChange(getCurrentGift(currentIndex));
+  }, [currentIndex, quantity, inventory]);
+
   const handlePrevious = () => {
-    setCurrentIndex((prev) => (prev - 1 + GIFTS.length) % GIFTS.length);
+    const newIndex = (currentIndex - 1 + GIFTS.length) % GIFTS.length;
+    setCurrentIndex(newIndex);
     setQuantity(1);
-    const newGift = GIFTS[(currentIndex - 1 + GIFTS.length) % GIFTS.length];
-    onGiftChange({ 
-      ...newGift, 
-      quantity: 1,
-      owned: inventory[newGift.id] || 0
-    });
   };
 
   const handleNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % GIFTS.length);
+    const newIndex = (currentIndex + 1) % GIFTS.length;
+    setCurrentIndex(newIndex);
     setQuantity(1);
-    const newGift = GIFTS[(currentIndex + 1) % GIFTS.length];
-    onGiftChange({ 
-      ...newGift, 
-      quantity: 1,
-      owned: inventory[newGift.id] || 0
-    });
   };
 
   const handleQuantityChange = (newQuantity: number) => {
     const validQuantity = Math.max(1, newQuantity);
     setQuantity(validQuantity);
-    onGiftChange({ ...currentGift, quantity: validQuantity });
   };
+
+  const currentGift = getCurrentGift(currentIndex);
 
   return (
     <div className="relative">
@@ -79,16 +80,19 @@ export function GiftDisplay({ onGiftChange, inventory }: GiftDisplayProps) {
             <ChevronLeft className="h-6 w-6" />
           </Button>
 
-          <div className="flex items-center justify-center gap-6">
+            <div className="flex items-center justify-center gap-6">
             <div className="text-6xl">{currentGift.emoji}</div>
             <Input
               type="number"
               value={quantity}
-              onChange={(e) => handleQuantityChange(parseInt(e.target.value) || 1)}
+              onChange={(e) => {
+              const newQuantity = parseInt(e.target.value) || 1;
+              handleQuantityChange(newQuantity);
+              }}
               className="w-20 text-center bg-white/10 border-white/20 text-white text-xl h-14 font-mono"
               min="1"
             />
-          </div>
+            </div>
 
           <Button
             variant="ghost"

@@ -44,7 +44,7 @@ export default function WelcomePage() {
   });
 
   const handleGiftChange = (gift: Gift) => {
-    setCurrentGift({ ...gift, quantity: 1 });
+    setCurrentGift({ ...gift });
   };
 
   const handlePurchase = (gift: Gift, quantity: number) => {
