@@ -16,7 +16,7 @@ export function NavigationMenu() {
   const router = useRouter();
 
   const menuItems = [
-    { icon: Send, label: 'Send Gift', href: '/app' },
+    { icon: Send, label: 'Send Gift', href: '/' },
     { icon: Wallet, label: 'Deposit', href: '/deposit' },
     { icon: ArrowUpRight, label: 'Withdraw', href: '/withdraw' },
     { icon: History, label: 'History', href: '/history' },

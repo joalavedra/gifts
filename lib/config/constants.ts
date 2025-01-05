@@ -4,7 +4,6 @@ export const APP_DESCRIPTION = 'Send virtual Christmas gifts to your loved ones'
 export const ROUTES = {
   HOME: '/',
   AUTH: '/auth',
-  APP: '/app',
   DEPOSIT: '/deposit',
   WITHDRAW: '/withdraw',
   HISTORY: '/history',

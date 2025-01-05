@@ -2,7 +2,7 @@
 
 import { RapidFireLogo } from "../ui/rapid-fire-logo";
 import { Button } from "../ui/button";
-import { useAccount, useConnect } from "wagmi";
+import { useAccount, useConnect, useReadContract } from "wagmi";
 import { useCallback, useEffect, useState } from "react";
 import { ecosystemWalletInstance } from "../../app/utils/ecosystemWallet";
 
@@ -10,6 +10,7 @@ import { GiftDisplay } from '@/components/gift-display';
 import { MainActions } from '@/components/main-actions';
 import { UserBalance } from '@/components/user-balance';
 import { Navigation } from '@/components/navigation';
+import { USDCabi } from "@/app/utils/abi";
 
 export type Gift = {
   id: number;
@@ -26,11 +27,17 @@ export function WalletConnect() {
       policy: process.env.NEXT_PUBLIC_POLICY_ID,
     });
   }, []);
-  
-  const { isConnected } = useAccount();
+  const { isConnected, address } = useAccount();
+
+  const { data: balance } = useReadContract({
+    address: "0x41e94eb019c0762f9bfcf9fb1e58725bfb0e7582",
+    functionName: "balanceOf",
+    abi: USDCabi,
+    args: [address],
+  })
+
   const { connectors, connect } = useConnect();
   
-    const [balance, setBalance] = useState(50);
     const [currentGift, setCurrentGift] = useState<Gift>({ 
       id: 1,
       name: 'Master Sword',
@@ -51,8 +58,7 @@ export function WalletConnect() {
   
     const handlePurchase = (gift: Gift, quantity: number) => {
       const totalCost = gift.price * quantity;
-      if (balance >= totalCost) {
-        setBalance(prev => prev - totalCost);
+      if ((balance as number ?? 0) >= totalCost) {
         setInventory(prev => ({
           ...prev,
           [gift.id]: (prev[gift.id] || 0) + quantity
@@ -91,7 +97,7 @@ export function WalletConnect() {
       <header className="flex items-center justify-between p-3 glass-card rounded-2xl">
         <Navigation />
         <h1 className="text-sm font-mono text-orange-500">GiftQuest</h1>
-        <UserBalance balance={balance} />
+        <UserBalance balance={balance as number ?? 0} />
       </header>
 
       <div className="space-y-6">
@@ -101,7 +107,7 @@ export function WalletConnect() {
         />
         <MainActions 
           currentGift={currentGift}
-          balance={balance}
+          balance={balance as number ?? 0}
           onPurchase={handlePurchase}
         />
       </div>

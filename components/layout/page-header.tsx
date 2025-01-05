@@ -9,7 +9,7 @@ interface PageHeaderProps {
   backLink?: string;
 }
 
-export function PageHeader({ title, backLink = '/app' }: PageHeaderProps) {
+export function PageHeader({ title, backLink = '/' }: PageHeaderProps) {
   return (
     <div className="flex items-center justify-between">
       {backLink && (

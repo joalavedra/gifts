@@ -8,10 +8,20 @@ import { Input } from '@/components/ui/input';
 import Link from 'next/link';
 import { toast } from "sonner";
 import { motion } from 'framer-motion';
+import { useAccount, useReadContract } from 'wagmi';
+import { USDCabi } from '../utils/abi';
 
 export default function WithdrawPage() {
   const [address, setAddress] = useState('');
   const [loading, setLoading] = useState(false);
+    const { address:walletAddress } = useAccount();
+  
+    const { data: balance } = useReadContract({
+      address: "0x41e94eb019c0762f9bfcf9fb1e58725bfb0e7582",
+      functionName: "balanceOf",
+      abi: USDCabi,
+      args: [walletAddress],
+    })
 
   const handleWithdraw = async () => {
     if (!address) {
@@ -43,13 +53,13 @@ export default function WithdrawPage() {
           </div>
 
           <div className="text-center space-y-2">
-            <div className="text-4xl font-mono">$50</div>
-            <div className="text-sm font-mono text-white/60">Available Balance</div>
+          <div className="text-4xl font-mono">{`$ ${balance ?? 0}`}</div>
+          <div className="text-sm font-mono text-white/60">Available Balance</div>
           </div>
 
           <div className="space-y-4">
             <div className="space-y-2">
-              <label className="text-sm font-mono">USDC Address (BASE)</label>
+              <label className="text-sm font-mono">USDC Address (AMOY POLYGON)</label>
               <Input
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
