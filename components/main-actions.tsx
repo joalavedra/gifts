@@ -9,6 +9,7 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { useNFTActions } from '@/lib/hooks/useNFTActions';
 import { Gift as GiftType } from '@/app/page';
+import { formatUnits } from 'viem';
 
 interface MainActionsProps {
   currentGift: GiftType;
@@ -20,7 +21,6 @@ export function MainActions({ currentGift, balance, onPurchase }: MainActionsPro
   const router = useRouter();
   const [loading, setLoading] = useState<string | null>(null);
   const { buyGift, sendGift, redeemGift, isLoading } = useNFTActions();
-
   const handleAction = async (action: string) => {
     if (isLoading) return;
     
@@ -30,8 +30,9 @@ export function MainActions({ currentGift, balance, onPurchase }: MainActionsPro
       switch (action) {
         case 'buy': {
           const totalCost = currentGift.price * currentGift.quantity;
-          if (balance < totalCost) {
-            toast.error(`Insufficient balance. Need $${totalCost} but only have $${balance}`);
+          const formattedBalance = formatUnits(balance, 6);
+          if (Number(formattedBalance) < totalCost) {
+            toast.error(`Insufficient balance. Need $${totalCost} but only have $${formattedBalance}`);
             return;
           }
 

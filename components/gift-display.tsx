@@ -1,24 +1,17 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Gift } from '@/app/page';
-
+import { useAccount, useReadContract } from 'wagmi';
+import { CONTRACTS } from '@/lib/contracts/config';
 
 const GIFTS: Omit<Gift, 'quantity'>[] = [
-  { id: 1, name: 'Master Sword', price: 15, emoji: '⚔️', owned: 2 },
-  { id: 2, name: 'Potion', price: 5, emoji: '🧪', owned: 0 },
-  { id: 3, name: 'Shield', price: 10, emoji: '🛡️', owned: 1 },
-  { id: 4, name: 'Bow', price: 8, emoji: '🏹', owned: 3 },
-  { id: 5, name: 'Magic Scroll', price: 12, emoji: '📜', owned: 0 },
-  { id: 6, name: 'Crystal', price: 7, emoji: '💎', owned: 0 },
-  { id: 7, name: 'Crown', price: 20, emoji: '👑', owned: 0 },
-  { id: 8, name: 'Key', price: 3, emoji: '🗝️', owned: 0 },
-  { id: 9, name: 'Map', price: 2, emoji: '🗺️', owned: 0 },
-  { id: 10, name: 'Chest', price: 15, emoji: '🎁', owned: 0 }
+  { id: 0, name: 'Master Sword', price: 1, emoji: '⚔️', owned: 0 },
+  { id: 1, name: 'Potion', price: 2, emoji: '🧪', owned: 0 },
 ];
 
 interface GiftDisplayProps {
@@ -28,39 +21,58 @@ interface GiftDisplayProps {
 
 export function GiftDisplay({ onGiftChange, inventory }: GiftDisplayProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const { address } = useAccount();
   const [quantity, setQuantity] = useState(1);
-  const currentGift = {
-    ...GIFTS[currentIndex],
-    owned: inventory[GIFTS[currentIndex].id] || 0
+  
+  const { data: onchainInventory, isSuccess } = useReadContract({
+    abi: CONTRACTS.GIFT_TOKEN.abi,
+    address: CONTRACTS.GIFT_TOKEN.address,
+    functionName: "balanceOfBatch",
+    args: [[address!, address!], [BigInt(0), BigInt(1)]],
+    query: { refetchInterval: 1000 },
+  });
+
+  // Get current gift with updated inventory from both props and onchain data
+  const getCurrentGift = (index: number): Gift => {
+    const baseGift = GIFTS[index];
+    let ownedAmount = inventory[baseGift.id] || 0;
+
+    // Update owned amount if onchain data is available
+    if (isSuccess && onchainInventory) {
+      const onchainAmount = Number(onchainInventory[baseGift.id]);
+      ownedAmount = onchainAmount;
+    }
+
+    return {
+      ...baseGift,
+      owned: ownedAmount,
+      quantity: quantity
+    };
   };
 
+  // Effect to sync gift changes with parent
+  useEffect(() => {
+    onGiftChange(getCurrentGift(currentIndex));
+  }, [currentIndex, quantity, inventory, onchainInventory, isSuccess]);
+
   const handlePrevious = () => {
-    setCurrentIndex((prev) => (prev - 1 + GIFTS.length) % GIFTS.length);
+    const newIndex = (currentIndex - 1 + GIFTS.length) % GIFTS.length;
+    setCurrentIndex(newIndex);
     setQuantity(1);
-    const newGift = GIFTS[(currentIndex - 1 + GIFTS.length) % GIFTS.length];
-    onGiftChange({ 
-      ...newGift, 
-      quantity: 1,
-      owned: inventory[newGift.id] || 0
-    });
   };
 
   const handleNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % GIFTS.length);
+    const newIndex = (currentIndex + 1) % GIFTS.length;
+    setCurrentIndex(newIndex);
     setQuantity(1);
-    const newGift = GIFTS[(currentIndex + 1) % GIFTS.length];
-    onGiftChange({ 
-      ...newGift, 
-      quantity: 1,
-      owned: inventory[newGift.id] || 0
-    });
   };
 
   const handleQuantityChange = (newQuantity: number) => {
     const validQuantity = Math.max(1, newQuantity);
     setQuantity(validQuantity);
-    onGiftChange({ ...currentGift, quantity: validQuantity });
   };
+
+  const currentGift = getCurrentGift(currentIndex);
 
   return (
     <div className="relative">
@@ -84,7 +96,10 @@ export function GiftDisplay({ onGiftChange, inventory }: GiftDisplayProps) {
             <Input
               type="number"
               value={quantity}
-              onChange={(e) => handleQuantityChange(parseInt(e.target.value) || 1)}
+              onChange={(e) => {
+                const newQuantity = parseInt(e.target.value) || 1;
+                handleQuantityChange(newQuantity);
+              }}
               className="w-20 text-center bg-white/10 border-white/20 text-white text-xl h-14 font-mono"
               min="1"
             />

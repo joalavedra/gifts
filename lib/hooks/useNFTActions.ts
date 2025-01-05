@@ -1,21 +1,23 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
+import { useAccount, useWaitForTransactionReceipt } from 'wagmi';
+import { useWriteContracts } from 'wagmi/experimental'
 import { CONTRACTS } from '@/lib/contracts/config';
 import { toast } from 'sonner';
 import { Gift } from './useGifts';
+import { parseUnits } from 'viem';
 
 export function useNFTActions() {
   const { address } = useAccount();
   const [isLoading, setIsLoading] = useState(false);
-  const { writeContract, data: hash, error: writeError, isPending: isWritePending } = useWriteContract();
+  const { data: hash, isPending: isWritePending, error: writeError, writeContracts } = useWriteContracts();
   const {
     data: receipt,
     error: waitError,
     isLoading: isWaitLoading
   } = useWaitForTransactionReceipt({
-    hash,
+    hash: hash as `0x${string}`,
   });
 
   // Handle transaction status and errors
@@ -48,26 +50,26 @@ export function useNFTActions() {
     setIsLoading(isWritePending || isWaitLoading);
   }, [isWritePending, isWaitLoading]);
 
-  const handleTransaction = async (
+  const handleTransaction = async (interactions: {
     functionName: string,
     args: unknown[],
-    value?: bigint
-  ): Promise<boolean> => {
+    value?: bigint,
+    contract: typeof CONTRACTS.GIFT_TOKEN | typeof CONTRACTS.USDC
+  }[]): Promise<boolean> => {
     try {
-      setIsLoading(true);
-      writeContract({
-        ...CONTRACTS.GIFT_TOKEN,
-        // @ts-ignore
-        functionName,
-        // @ts-ignore
-        args,
-        value
+      writeContracts({
+        contracts: interactions.map(({ functionName, args, value, contract }) => ({
+          address: contract.address,
+          abi: contract.abi,
+          functionName,
+          args,
+          value
+        }))
       });
 
       // Return true if we get here without error
-      return true;
+      return !writeError;
     } catch (error: any) {
-      setIsLoading(false);
       toast.error(error.message || 'Transaction failed');
       return false;
     }
@@ -79,13 +81,23 @@ export function useNFTActions() {
       return false;
     }
 
-    const value = BigInt(gift.price * quantity * 10 ** 6); // Convert to USDC decimals
-    return handleTransaction('mint', [
-      address,
-      BigInt(gift.id),
-      BigInt(quantity),
-      '0x'
-    ], value);
+    const value = parseUnits(String(gift.price * quantity), 6);
+    const giftPrice = parseUnits(String(gift.price), 6);
+    console.log('gift', gift);
+    const proof = [
+      "0x0000000000000000000000000000000000000000000000000000000000000000",
+    ];
+    const quantityLimitPerWallet = 1
+    const allowlistProof = [
+      proof,
+      quantityLimitPerWallet,
+      giftPrice,
+      CONTRACTS.USDC.address,
+    ];
+    return handleTransaction([
+      { contract: CONTRACTS.USDC, args: [CONTRACTS.GIFT_TOKEN.address, value], functionName: 'approve' },
+      { contract: CONTRACTS.GIFT_TOKEN, args: [address, gift.id, quantity, CONTRACTS.USDC.address, giftPrice, allowlistProof, '0x'], functionName: 'claim' }
+    ]);
   };
 
   const sendGift = async (gift: Gift, quantity: number, toAddress: string) => {
@@ -94,13 +106,7 @@ export function useNFTActions() {
       return false;
     }
 
-    return handleTransaction('safeTransferFrom', [
-      address,
-      toAddress,
-      BigInt(gift.id),
-      BigInt(quantity),
-      '0x'
-    ]);
+    return handleTransaction([{ contract: CONTRACTS.GIFT_TOKEN, args: [address, toAddress, BigInt(gift.id), BigInt(quantity), '0x'], functionName: 'safeTransferFrom' }]);
   };
 
   const redeemGift = async (gift: Gift, quantity: number) => {
@@ -109,11 +115,7 @@ export function useNFTActions() {
       return false;
     }
 
-    return handleTransaction('burn', [
-      address,
-      BigInt(gift.id),
-      BigInt(quantity)
-    ]);
+    return handleTransaction([{ args: [address, BigInt(gift.id), BigInt(quantity)], functionName: 'burn', contract: CONTRACTS.GIFT_TOKEN }]);
   };
 
   return {

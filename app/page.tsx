@@ -26,6 +26,7 @@ export default function WelcomePage() {
     functionName: "balanceOf",
     abi: CONTRACTS.USDC.abi,
     args: [address!],
+    query: { refetchInterval: 1000 }
   });
 
   const [currentGift, setCurrentGift] = useState<Gift>({ 
@@ -44,7 +45,7 @@ export default function WelcomePage() {
   });
 
   const handleGiftChange = (gift: Gift) => {
-    setCurrentGift({ ...gift, quantity: 1 });
+    setCurrentGift({ ...gift });
   };
 
   const handlePurchase = (gift: Gift, quantity: number) => {

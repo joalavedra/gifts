@@ -9,8 +9,8 @@ import { toast } from "sonner";
 
 export function HistoryView() {
   const [links] = useState([
-    { id: 1, gift: 'Master Sword', value: 15, claimed: false, link: 'https://pixelpresents.app/claim/abc123' },
-    { id: 2, gift: 'Pokédex', value: 10, claimed: true, link: 'https://pixelpresents.app/claim/def456' },
+    { id: 1, gift: 'Master Sword', value: 15, claimed: false, link: 'https://giftquest1.vercel.app/claim/abc123' },
+    { id: 2, gift: 'Pokédex', value: 10, claimed: true, link: 'https://giftquest1.vercel.app/claim/def456' },
   ]);
 
   const copyLink = (link: string) => {

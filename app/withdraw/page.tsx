@@ -23,6 +23,7 @@ export default function WithdrawPage() {
     functionName: "balanceOf",
     abi: CONTRACTS.USDC.abi,
     args: [walletAddress!],
+    query: { refetchInterval: 1000 }
   })
 
   const handleWithdraw = async () => {

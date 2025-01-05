@@ -28,7 +28,7 @@ export default function SendPage({
   
   // Parse the asset from searchParams
   const asset = searchParams.asset ? JSON.parse(decodeURIComponent(searchParams.asset)) : null;
-  const claimLink = `https://giftquest.app/claim/${asset?.id || 'invalid'}`;
+  const claimLink = `https://giftquest1.vercel.app/claim/${asset?.id || 'invalid'}`;
 
   const copyLink = async () => {
     setIsCopying(true);
