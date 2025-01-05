@@ -7,13 +7,14 @@ import Link from 'next/link';
 import { toast } from "sonner";
 import { useAccount, useReadContract } from 'wagmi';
 import { USDCabi } from '@/app/utils/abi';
+import { formatUnits } from 'viem';
 
 export function DepositForm() {
   const {address} = useAccount();
 
 
   const { data: balance } = useReadContract({
-    address: "0x41e94eb019c0762f9bfcf9fb1e58725bfb0e7582",
+    address: "0x42847D8FAff45c72A92Cce9458Fe622001463dF0",
     functionName: "balanceOf",
     abi: USDCabi,
     args: [address],
@@ -37,7 +38,7 @@ export function DepositForm() {
       </div>
 
       <div className="text-center space-y-2">
-      <div className="text-4xl font-mono">{`$ ${balance ?? 0}`}</div>
+            <div className="text-4xl font-mono">{`$ ${balance ? formatUnits(balance as bigint, 6):0}`}</div>
       <div className="text-sm opacity-80">Current Balance</div>
       </div>
 
@@ -52,7 +53,7 @@ export function DepositForm() {
         <div className="text-center text-sm opacity-80">OR</div>
 
         <div className="space-y-2">
-          <div className="text-sm">Send USDC (AMOY POLYGON ONLY) to this address:</div>
+          <div className="text-sm">Send USDC (SEPOLIA ANCIENT8 ONLY) to this address:</div>
           <div className="flex gap-2">
             <div className="flex-1 bg-[#ffffff30] rounded-lg p-3 text-sm truncate">
               {address}

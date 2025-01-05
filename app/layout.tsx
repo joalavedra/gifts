@@ -5,6 +5,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/sonner';
 import { Snowfall } from '@/components/snowfall';
 import { WagmiConfig } from '@/lib/providers/wagmi';
+import { AuthProvider } from '@/components/auth/AuthProvider';
 
 const spaceMono = Space_Mono({ 
   weight: '400',
@@ -32,10 +33,12 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <WagmiConfig>
-            <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-red-500/10 via-background to-background">
-              <Snowfall />
-              {children}
-            </div>
+            <AuthProvider>
+              <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-red-500/10 via-background to-background">
+                <Snowfall />
+                {children}
+              </div>
+            </AuthProvider>
             <Toaster />
           </WagmiConfig>
         </ThemeProvider>

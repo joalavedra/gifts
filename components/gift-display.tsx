@@ -5,8 +5,8 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { Gift } from './wallet/WalletConnect';
-import { useRouter } from 'next/navigation';
+import { Gift } from '@/app/page';
+
 
 const GIFTS: Omit<Gift, 'quantity'>[] = [
   { id: 1, name: 'Master Sword', price: 15, emoji: '⚔️', owned: 2 },

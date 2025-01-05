@@ -8,30 +8,36 @@ import { Input } from '@/components/ui/input';
 import Link from 'next/link';
 import { toast } from "sonner";
 import { motion } from 'framer-motion';
-import { useAccount, useReadContract } from 'wagmi';
+import { useAccount, useReadContract, useWriteContract } from 'wagmi';
 import { USDCabi } from '../utils/abi';
+import { formatUnits } from 'viem';
 
 export default function WithdrawPage() {
   const [address, setAddress] = useState('');
-  const [loading, setLoading] = useState(false);
-    const { address:walletAddress } = useAccount();
-  
-    const { data: balance } = useReadContract({
-      address: "0x41e94eb019c0762f9bfcf9fb1e58725bfb0e7582",
-      functionName: "balanceOf",
-      abi: USDCabi,
-      args: [walletAddress],
-    })
+
+  const { writeContract, isPending, data } = useWriteContract();
+  const { address:walletAddress } = useAccount();
+
+  const { data: balance } = useReadContract({
+    address: "0x42847D8FAff45c72A92Cce9458Fe622001463dF0",
+    functionName: "balanceOf",
+    abi: USDCabi,
+    args: [walletAddress],
+  })
 
   const handleWithdraw = async () => {
     if (!address) {
       toast.error('Please enter a withdrawal address');
       return;
     }
-    setLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate transaction
-    toast.success('Withdrawal initiated');
-    setLoading(false);
+    toast.message('Withdrawal initiated');
+    writeContract({
+      abi: USDCabi,
+      address: "0x42847D8FAff45c72A92Cce9458Fe622001463dF0",
+      functionName: "transfer",
+      args: [address, balance], 
+    })
+    toast.success(data ? `Withdrawal successful: ${data}` : 'Withdrawal failed');
   };
 
   return (
@@ -53,13 +59,13 @@ export default function WithdrawPage() {
           </div>
 
           <div className="text-center space-y-2">
-          <div className="text-4xl font-mono">{`$ ${balance ?? 0}`}</div>
+            <div className="text-4xl font-mono">{`$ ${balance ? formatUnits(balance as bigint, 6):0}`}</div>
           <div className="text-sm font-mono text-white/60">Available Balance</div>
           </div>
 
           <div className="space-y-4">
             <div className="space-y-2">
-              <label className="text-sm font-mono">USDC Address (AMOY POLYGON)</label>
+              <label className="text-sm font-mono">USDC Address (SEPOLIA ANCIENT8)</label>
               <Input
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
@@ -71,9 +77,9 @@ export default function WithdrawPage() {
             <Button 
               className="w-full glass-button hover:bg-white/20 text-white py-6 font-mono disabled:opacity-50"
               onClick={handleWithdraw}
-              disabled={loading}
+              disabled={isPending}
             >
-              {loading ? (
+              {isPending ? (
                 <Loader2 className="h-5 w-5 animate-spin" />
               ) : (
                 'Withdraw'
