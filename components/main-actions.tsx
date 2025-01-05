@@ -19,7 +19,7 @@ interface MainActionsProps {
 export function MainActions({ currentGift, balance, onPurchase }: MainActionsProps) {
   const router = useRouter();
   const [loading, setLoading] = useState<string | null>(null);
-  const { buyGift, sendGift, redeemGift, isLoading: isContractLoading } = useNFTActions();
+  const { buyGift, sendGift, redeemGift, isContractLoading } = useNFTActions();
 
   const handleAction = async (action: string) => {
     if (isContractLoading) return;
@@ -47,7 +47,15 @@ export function MainActions({ currentGift, balance, onPurchase }: MainActionsPro
             toast.error("You don't own any of this item to send");
             return;
           }
-          router.push('/send');
+
+          if (currentGift.owned < currentGift.quantity) {
+            toast.error(`You only have ${currentGift.owned} ${currentGift.name} available`);
+            return;
+          }
+
+          // Encode the gift data and navigate to send page
+          const giftParam = encodeURIComponent(JSON.stringify(currentGift));
+          router.push(`/send?asset=${giftParam}`);
           break;
         }
 
