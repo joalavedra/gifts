@@ -8,31 +8,36 @@ import { Input } from '@/components/ui/input';
 import Link from 'next/link';
 import { toast } from "sonner";
 import { motion } from 'framer-motion';
-import { useAccount, useReadContract } from 'wagmi';
+import { useAccount, useReadContract, useWriteContract } from 'wagmi';
 import { USDCabi } from '../utils/abi';
 import { formatUnits } from 'viem';
 
 export default function WithdrawPage() {
   const [address, setAddress] = useState('');
-  const [loading, setLoading] = useState(false);
-    const { address:walletAddress } = useAccount();
-  
-    const { data: balance } = useReadContract({
-      address: "0x42847D8FAff45c72A92Cce9458Fe622001463dF0",
-      functionName: "balanceOf",
-      abi: USDCabi,
-      args: [walletAddress],
-    })
+
+  const { writeContract, isPending, data } = useWriteContract();
+  const { address:walletAddress } = useAccount();
+
+  const { data: balance } = useReadContract({
+    address: "0x42847D8FAff45c72A92Cce9458Fe622001463dF0",
+    functionName: "balanceOf",
+    abi: USDCabi,
+    args: [walletAddress],
+  })
 
   const handleWithdraw = async () => {
     if (!address) {
       toast.error('Please enter a withdrawal address');
       return;
     }
-    setLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate transaction
-    toast.success('Withdrawal initiated');
-    setLoading(false);
+    toast.message('Withdrawal initiated');
+    writeContract({
+      abi: USDCabi,
+      address: "0x42847D8FAff45c72A92Cce9458Fe622001463dF0",
+      functionName: "transfer",
+      args: [address, balance], 
+    })
+    toast.success(data ? `Withdrawal successful: ${data}` : 'Withdrawal failed');
   };
 
   return (
@@ -72,9 +77,9 @@ export default function WithdrawPage() {
             <Button 
               className="w-full glass-button hover:bg-white/20 text-white py-6 font-mono disabled:opacity-50"
               onClick={handleWithdraw}
-              disabled={loading}
+              disabled={isPending}
             >
-              {loading ? (
+              {isPending ? (
                 <Loader2 className="h-5 w-5 animate-spin" />
               ) : (
                 'Withdraw'
