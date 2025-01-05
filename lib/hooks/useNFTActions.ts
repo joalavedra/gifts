@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { CONTRACTS } from '@/lib/contracts/config';
 import { toast } from 'sonner';
@@ -9,17 +9,53 @@ import { Gift } from './useGifts';
 export function useNFTActions() {
   const { address } = useAccount();
   const [isLoading, setIsLoading] = useState(false);
-  const { writeContract } = useWriteContract();
+  const { writeContract, data: hash, error: writeError, isPending: isWritePending } = useWriteContract();
+  const {
+    data: receipt,
+    error: waitError,
+    isLoading: isWaitLoading
+  } = useWaitForTransactionReceipt({
+    hash,
+  });
+
+  // Handle transaction status and errors
+  useEffect(() => {
+    if (writeError) {
+      setIsLoading(false);
+      toast.error(writeError.message || 'Transaction failed');
+
+    }
+  }, [writeError]);
+
+  useEffect(() => {
+    if (waitError) {
+      setIsLoading(false);
+      toast.error(waitError.message || 'Transaction failed');
+    }
+  }, [waitError]);
+
+  useEffect(() => {
+    if (receipt?.status === 'success') {
+      setIsLoading(false);
+      toast.success('Transaction successful!');
+    } else if (receipt?.status === 'reverted') {
+      setIsLoading(false);
+      toast.error('Transaction failed');
+    }
+  }, [receipt]);
+
+  useEffect(() => {
+    setIsLoading(isWritePending || isWaitLoading);
+  }, [isWritePending, isWaitLoading]);
 
   const handleTransaction = async (
     functionName: string,
     args: unknown[],
     value?: bigint
-  ) => {
+  ): Promise<boolean> => {
     try {
       setIsLoading(true);
-
-      const hash = await writeContract({
+      writeContract({
         ...CONTRACTS.GIFT_TOKEN,
         // @ts-ignore
         functionName,
@@ -28,24 +64,12 @@ export function useNFTActions() {
         value
       });
 
-      // @ts-ignore
-      const receipt = await useWaitForTransactionReceipt({ hash });
-
-      if (receipt.status === 'success') {
-        toast.success('Transaction successful!');
-        return true;
-      } else {
-        throw new Error('Transaction failed');
-      }
+      // Return true if we get here without error
+      return true;
     } catch (error: any) {
-      if (error.code === 4001) {
-        toast.error('Transaction rejected. Please try again.');
-      } else {
-        toast.error(error.message || 'Transaction failed');
-      }
-      return false;
-    } finally {
       setIsLoading(false);
+      toast.error(error.message || 'Transaction failed');
+      return false;
     }
   };
 
@@ -56,7 +80,12 @@ export function useNFTActions() {
     }
 
     const value = BigInt(gift.price * quantity * 10 ** 6); // Convert to USDC decimals
-    return handleTransaction('mint', [address, BigInt(gift.id), BigInt(quantity), '0x'], value);
+    return handleTransaction('mint', [
+      address,
+      BigInt(gift.id),
+      BigInt(quantity),
+      '0x'
+    ], value);
   };
 
   const sendGift = async (gift: Gift, quantity: number, toAddress: string) => {
@@ -91,6 +120,8 @@ export function useNFTActions() {
     buyGift,
     sendGift,
     redeemGift,
-    isLoading
+    isLoading,
+    transactionHash: hash,
+    receipt
   };
 }

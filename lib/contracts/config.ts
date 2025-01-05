@@ -1,4 +1,5 @@
 import { giftTokenAbi } from './abis/giftToken';
+import { usdcTokenAbi } from './abis/usdcToken';
 
 export const CONTRACTS = {
   GIFT_TOKEN: {
@@ -6,6 +7,7 @@ export const CONTRACTS = {
     abi: giftTokenAbi
   },
   USDC: {
-    address: "0x42847D8FAff45c72A92Cce9458Fe622001463dF0" as const
+    address: "0x42847D8FAff45c72A92Cce9458Fe622001463dF0" as const,
+    abi: usdcTokenAbi
   }
 } as const;

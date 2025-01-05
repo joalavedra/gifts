@@ -9,8 +9,8 @@ import Link from 'next/link';
 import { toast } from "sonner";
 import { motion } from 'framer-motion';
 import { useAccount, useReadContract, useWriteContract } from 'wagmi';
-import { USDCabi } from '../utils/abi';
 import { formatUnits } from 'viem';
+import { CONTRACTS } from '@/lib/contracts/config';
 
 export default function WithdrawPage() {
   const [address, setAddress] = useState('');
@@ -19,10 +19,10 @@ export default function WithdrawPage() {
   const { address:walletAddress } = useAccount();
 
   const { data: balance } = useReadContract({
-    address: "0x42847D8FAff45c72A92Cce9458Fe622001463dF0",
+    address: CONTRACTS.USDC.address,
     functionName: "balanceOf",
-    abi: USDCabi,
-    args: [walletAddress],
+    abi: CONTRACTS.USDC.abi,
+    args: [walletAddress!],
   })
 
   const handleWithdraw = async () => {
@@ -32,10 +32,10 @@ export default function WithdrawPage() {
     }
     toast.message('Withdrawal initiated');
     writeContract({
-      abi: USDCabi,
-      address: "0x42847D8FAff45c72A92Cce9458Fe622001463dF0",
+      abi: CONTRACTS.USDC.abi,
+      address: CONTRACTS.USDC.address,
       functionName: "transfer",
-      args: [address, balance], 
+      args: [address as `0x${string}`, balance!], 
     })
     toast.success(data ? `Withdrawal successful: ${data}` : 'Withdrawal failed');
   };
