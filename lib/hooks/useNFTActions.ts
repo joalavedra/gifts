@@ -12,7 +12,6 @@ export function useNFTActions() {
   const { address } = useAccount();
   const [isLoading, setIsLoading] = useState(false);
   const { data: hash, isPending: isWritePending, error: writeError, writeContracts } = useWriteContracts();
-  console.log('writeError', writeError);
   const {
     data: receipt,
     error: waitError,

@@ -6,6 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Gift } from '@/app/page';
+import { useAccount, useReadContract } from 'wagmi';
+import { CONTRACTS } from '@/lib/contracts/config';
 
 const GIFTS: Omit<Gift, 'quantity'>[] = [
   { id: 0, name: 'Master Sword', price: 1, emoji: '⚔️', owned: 0 },
@@ -19,14 +21,31 @@ interface GiftDisplayProps {
 
 export function GiftDisplay({ onGiftChange, inventory }: GiftDisplayProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const { address } = useAccount();
   const [quantity, setQuantity] = useState(1);
+  
+  const { data: onchainInventory, isSuccess } = useReadContract({
+    abi: CONTRACTS.GIFT_TOKEN.abi,
+    address: CONTRACTS.GIFT_TOKEN.address,
+    functionName: "balanceOfBatch",
+    args: [[address!, address!], [BigInt(0), BigInt(1)]],
+    query: { refetchInterval: 1000 },
+  });
 
-  // Update the current gift with the correct inventory amount
+  // Get current gift with updated inventory from both props and onchain data
   const getCurrentGift = (index: number): Gift => {
     const baseGift = GIFTS[index];
+    let ownedAmount = inventory[baseGift.id] || 0;
+
+    // Update owned amount if onchain data is available
+    if (isSuccess && onchainInventory) {
+      const onchainAmount = Number(onchainInventory[baseGift.id]);
+      ownedAmount = onchainAmount;
+    }
+
     return {
       ...baseGift,
-      owned: inventory[baseGift.id] || 0,
+      owned: ownedAmount,
       quantity: quantity
     };
   };
@@ -34,7 +53,7 @@ export function GiftDisplay({ onGiftChange, inventory }: GiftDisplayProps) {
   // Effect to sync gift changes with parent
   useEffect(() => {
     onGiftChange(getCurrentGift(currentIndex));
-  }, [currentIndex, quantity, inventory]);
+  }, [currentIndex, quantity, inventory, onchainInventory, isSuccess]);
 
   const handlePrevious = () => {
     const newIndex = (currentIndex - 1 + GIFTS.length) % GIFTS.length;
@@ -72,19 +91,19 @@ export function GiftDisplay({ onGiftChange, inventory }: GiftDisplayProps) {
             <ChevronLeft className="h-6 w-6" />
           </Button>
 
-            <div className="flex items-center justify-center gap-6">
+          <div className="flex items-center justify-center gap-6">
             <div className="text-6xl">{currentGift.emoji}</div>
             <Input
               type="number"
               value={quantity}
               onChange={(e) => {
-              const newQuantity = parseInt(e.target.value) || 1;
-              handleQuantityChange(newQuantity);
+                const newQuantity = parseInt(e.target.value) || 1;
+                handleQuantityChange(newQuantity);
               }}
               className="w-20 text-center bg-white/10 border-white/20 text-white text-xl h-14 font-mono"
               min="1"
             />
-            </div>
+          </div>
 
           <Button
             variant="ghost"
