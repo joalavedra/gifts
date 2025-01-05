@@ -19,10 +19,10 @@ interface MainActionsProps {
 export function MainActions({ currentGift, balance, onPurchase }: MainActionsProps) {
   const router = useRouter();
   const [loading, setLoading] = useState<string | null>(null);
-  const { buyGift, sendGift, redeemGift, isContractLoading } = useNFTActions();
+  const { buyGift, sendGift, redeemGift, isLoading } = useNFTActions();
 
   const handleAction = async (action: string) => {
-    if (isContractLoading) return;
+    if (isLoading) return;
     
     setLoading(action);
     
@@ -90,7 +90,7 @@ export function MainActions({ currentGift, balance, onPurchase }: MainActionsPro
               variant="secondary" 
               className="glass-button flex flex-col items-center gap-2 h-auto py-4 w-full disabled:opacity-50"
               onClick={() => handleAction(action)}
-              disabled={loading !== null || isContractLoading}
+              disabled={loading !== null || isLoading}
             >
               {loading === action ? (
                 <Loader2 className="h-5 w-5 animate-spin text-orange-500" />

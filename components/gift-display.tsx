@@ -27,7 +27,6 @@ interface GiftDisplayProps {
 }
 
 export function GiftDisplay({ onGiftChange, inventory }: GiftDisplayProps) {
-  const router = useRouter();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const currentGift = {
