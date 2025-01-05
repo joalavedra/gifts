@@ -20,6 +20,7 @@ export default function DepositPage() {
     functionName: "balanceOf",
     abi: CONTRACTS.USDC.abi,
     args: [address!],
+    query: { refetchInterval: 1000 }
   })
   const copyAddress = async () => {
     if (!address) return;

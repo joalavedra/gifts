@@ -8,16 +8,8 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Gift } from '@/app/page';
 
 const GIFTS: Omit<Gift, 'quantity'>[] = [
-  { id: 1, name: 'Master Sword', price: 15, emoji: '⚔️', owned: 2 },
-  { id: 2, name: 'Potion', price: 5, emoji: '🧪', owned: 0 },
-  { id: 3, name: 'Shield', price: 10, emoji: '🛡️', owned: 1 },
-  { id: 4, name: 'Bow', price: 8, emoji: '🏹', owned: 3 },
-  { id: 5, name: 'Magic Scroll', price: 12, emoji: '📜', owned: 0 },
-  { id: 6, name: 'Crystal', price: 7, emoji: '💎', owned: 0 },
-  { id: 7, name: 'Crown', price: 20, emoji: '👑', owned: 0 },
-  { id: 8, name: 'Key', price: 3, emoji: '🗝️', owned: 0 },
-  { id: 9, name: 'Map', price: 2, emoji: '🗺️', owned: 0 },
-  { id: 10, name: 'Chest', price: 15, emoji: '🎁', owned: 0 }
+  { id: 0, name: 'Master Sword', price: 1, emoji: '⚔️', owned: 0 },
+  { id: 1, name: 'Potion', price: 2, emoji: '🧪', owned: 0 },
 ];
 
 interface GiftDisplayProps {

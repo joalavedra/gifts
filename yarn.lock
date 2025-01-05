@@ -5416,7 +5416,7 @@ viem@^2.1.1, viem@^2.21.54, viem@^2.7.9:
     webauthn-p256 "0.0.10"
     ws "8.18.0"
 
-wagmi@^2.5.7:
+wagmi@^2.11.3:
   version "2.14.6"
   resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-2.14.6.tgz#046db4c119f53c276c9f2d4b0034fe2ebc3ff05c"
   integrity sha512-h8KDjPiXywZcKAbGttGDlZpwabZynR4lZ8eDO63tNgfxiMyhld0M5bMcB/u7XnH2xFgd0gq7PA2RVz96XMjazw==

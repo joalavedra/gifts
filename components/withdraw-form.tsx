@@ -20,7 +20,8 @@ export function WithdrawForm() {
     address: CONTRACTS.USDC.address,
     functionName: "balanceOf",
     abi: CONTRACTS.USDC.abi,
-      args: [walletAddress!],
+    args: [walletAddress!],
+    query: { refetchInterval: 1000 }
     })
   
   const handleWithdraw = () => {

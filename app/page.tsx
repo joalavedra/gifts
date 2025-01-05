@@ -26,6 +26,7 @@ export default function WelcomePage() {
     functionName: "balanceOf",
     abi: CONTRACTS.USDC.abi,
     args: [address!],
+    query: { refetchInterval: 1000 }
   });
 
   const [currentGift, setCurrentGift] = useState<Gift>({ 
