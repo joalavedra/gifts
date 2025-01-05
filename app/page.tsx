@@ -3,11 +3,11 @@
 import { motion } from 'framer-motion';
 import { useAccount, useReadContract } from 'wagmi';
 import { useState } from 'react';
-import { USDCabi } from '@/app/utils/abi';
 import { GiftDisplay } from '@/components/gift-display';
 import { MainActions } from '@/components/main-actions';
 import { UserBalance } from '@/components/user-balance';
 import { Navigation } from '@/components/navigation';
+import { CONTRACTS } from '@/lib/contracts/config';
 
 export type Gift = {
   id: number;
@@ -22,10 +22,10 @@ export default function WelcomePage() {
   const { address } = useAccount();
   
   const { data: balance } = useReadContract({
-    address: "0x42847D8FAff45c72A92Cce9458Fe622001463dF0",
+    address: CONTRACTS.USDC.address ,
     functionName: "balanceOf",
-    abi: USDCabi,
-    args: [address],
+    abi: CONTRACTS.USDC.abi,
+    args: [address!],
   });
 
   const [currentGift, setCurrentGift] = useState<Gift>({ 
@@ -49,7 +49,7 @@ export default function WelcomePage() {
 
   const handlePurchase = (gift: Gift, quantity: number) => {
     const totalCost = gift.price * quantity;
-    if ((balance as number ?? 0) >= totalCost) {
+    if ((balance ?? 0) >= totalCost) {
       setInventory(prev => ({
         ...prev,
         [gift.id]: (prev[gift.id] || 0) + quantity

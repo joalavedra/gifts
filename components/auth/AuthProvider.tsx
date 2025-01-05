@@ -2,9 +2,9 @@
 
 import { useAccount, useConnect } from 'wagmi';
 import { useEffect, useCallback } from 'react';
-import { ecosystemWalletInstance } from '@/app/utils/ecosystemWallet';
 import { Button } from '@/components/ui/button';
 import { RapidFireLogo } from '@/components/ui/rapid-fire-logo';
+import { ecosystemWalletInstance } from '@/lib/ecosystemWallet';
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { isConnected } = useAccount();

@@ -8,18 +8,18 @@ import Link from 'next/link';
 import { toast } from "sonner";
 import { motion } from 'framer-motion';
 import { useAccount, useReadContract } from 'wagmi';
-import { USDCabi } from '../utils/abi';
 import { formatUnits } from 'viem';
+import { CONTRACTS } from '@/lib/contracts/config';
 
 export default function DepositPage() {
   const { address } = useAccount();
   const [isCopying, setIsCopying] = useState(false);
 
   const { data: balance } = useReadContract({
-    address: "0x42847D8FAff45c72A92Cce9458Fe622001463dF0",
+    address: CONTRACTS.USDC.address,
     functionName: "balanceOf",
-    abi: USDCabi,
-    args: [address],
+    abi: CONTRACTS.USDC.abi,
+    args: [address!],
   })
   const copyAddress = async () => {
     if (!address) return;

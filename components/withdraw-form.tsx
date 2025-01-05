@@ -8,8 +8,8 @@ import { Input } from '@/components/ui/input';
 import Link from 'next/link';
 import { toast } from "sonner";
 import { useAccount, useReadContract } from 'wagmi';
-import { USDCabi } from '@/app/utils/abi';
 import { formatUnits } from 'viem';
+import { CONTRACTS } from '@/lib/contracts/config';
 
 export function WithdrawForm() {
   const [address, setAddress] = useState('');
@@ -17,10 +17,10 @@ export function WithdrawForm() {
 
 
     const { data: balance } = useReadContract({
-      address: "0x42847D8FAff45c72A92Cce9458Fe622001463dF0",
-      functionName: "balanceOf",
-      abi: USDCabi,
-      args: [walletAddress],
+    address: CONTRACTS.USDC.address,
+    functionName: "balanceOf",
+    abi: CONTRACTS.USDC.abi,
+      args: [walletAddress!],
     })
   
   const handleWithdraw = () => {
