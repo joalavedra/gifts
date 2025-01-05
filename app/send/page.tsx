@@ -46,7 +46,7 @@ export default function SendPage() {
               }}
             >
               <img
-                src="/gift-with-wings.png"
+                src="https://www.outletbebe.es/media/catalog/product/cache/1/image/350x350/9df78eab33525d08d6e5fb8d27136e95/r/e/regalo.jpg"
                 alt="Flying Gift"
                 className="w-full h-full object-contain"
               />
