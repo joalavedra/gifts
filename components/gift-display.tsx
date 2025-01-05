@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Gift } from './wallet/WalletConnect';
+import { useRouter } from 'next/navigation';
 
 const GIFTS: Omit<Gift, 'quantity'>[] = [
   { id: 1, name: 'Master Sword', price: 15, emoji: '⚔️', owned: 2 },
@@ -26,6 +27,7 @@ interface GiftDisplayProps {
 }
 
 export function GiftDisplay({ onGiftChange, inventory }: GiftDisplayProps) {
+  const router = useRouter();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const currentGift = {
