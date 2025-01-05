@@ -35,7 +35,7 @@ export default function AboutPage() {
           <section>
             <h2 className="text-lg font-mono text-orange-500 mb-3">How it works:</h2>
             <ol className="space-y-2 text-sm font-mono text-white/80">
-              <li>1. Deposit USDC on Base via the Deposit page</li>
+              <li>1. Deposit USDC on Ancient8 Sepolia via the Deposit page</li>
               <li>2. Buy a token and hit send</li>
               <li>3. Share the generated claim link with a friend</li>
             </ol>

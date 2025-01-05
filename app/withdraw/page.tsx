@@ -17,7 +17,7 @@ export default function WithdrawPage() {
     const { address:walletAddress } = useAccount();
   
     const { data: balance } = useReadContract({
-      address: "0x41e94eb019c0762f9bfcf9fb1e58725bfb0e7582",
+      address: "0x42847D8FAff45c72A92Cce9458Fe622001463dF0",
       functionName: "balanceOf",
       abi: USDCabi,
       args: [walletAddress],
@@ -59,7 +59,7 @@ export default function WithdrawPage() {
 
           <div className="space-y-4">
             <div className="space-y-2">
-              <label className="text-sm font-mono">USDC Address (AMOY POLYGON)</label>
+              <label className="text-sm font-mono">USDC Address (SEPOLIA ANCIENT8)</label>
               <Input
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}

@@ -15,7 +15,7 @@ export default function DepositPage() {
   const [isCopying, setIsCopying] = useState(false);
 
   const { data: balance } = useReadContract({
-    address: "0x41e94eb019c0762f9bfcf9fb1e58725bfb0e7582",
+    address: "0x42847D8FAff45c72A92Cce9458Fe622001463dF0",
     functionName: "balanceOf",
     abi: USDCabi,
     args: [address],
@@ -69,7 +69,7 @@ export default function DepositPage() {
             <div className="text-center text-sm font-mono text-white/60">OR</div>
 
             <div className="space-y-2">
-              <div className="text-sm font-mono">Send USDC (AMOY POLYGON ONLY) to this address:</div>
+              <div className="text-sm font-mono">Send USDC (SEPOLIA ANCIENT8 ONLY) to this address:</div>
               <div className="flex gap-2">
                 <div className="flex-1 glass-button rounded-lg p-3 text-sm font-mono truncate">
                   {address}

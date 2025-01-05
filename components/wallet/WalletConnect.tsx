@@ -30,7 +30,7 @@ export function WalletConnect() {
   const { isConnected, address } = useAccount();
 
   const { data: balance } = useReadContract({
-    address: "0x41e94eb019c0762f9bfcf9fb1e58725bfb0e7582",
+    address: "0x42847D8FAff45c72A92Cce9458Fe622001463dF0",
     functionName: "balanceOf",
     abi: USDCabi,
     args: [address],
