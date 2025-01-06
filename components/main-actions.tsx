@@ -5,7 +5,7 @@ import { ShoppingCart, Send, Gift, Loader2 } from 'lucide-react';
 import { toast } from "sonner";
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNFTActions } from '@/lib/hooks/useNFTActions';
 import { Gift as GiftType } from '@/app/page';
 import { formatUnits } from 'viem';
@@ -19,7 +19,52 @@ interface MainActionsProps {
 export function MainActions({ currentGift, balance, onPurchase }: MainActionsProps) {
   const router = useRouter();
   const [loading, setLoading] = useState<string | null>(null);
-  const { buyGift, redeemGift, isLoading } = useNFTActions();
+  const { buyGift, redeemGift, isLoading, transactionHash } = useNFTActions();
+  const [pendingRedemption, setPendingRedemption] = useState(false);
+
+  // Watch for transaction hash when redeeming
+  useEffect(() => {
+    const handleRedemption = async () => {
+      if (pendingRedemption && transactionHash) {
+        try {
+          // Call redemption API endpoint
+          const response = await fetch('/api/redeem', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              transactionHash,
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error('Redemption API call failed');
+          }
+
+          const data = await response.json();
+          
+          if (data.success && data.hash) {
+            const redeemValue = currentGift.price * currentGift.owned;
+            toast.success(`Redeemed successfully! $${redeemValue} added to your balance`, {
+              description: 'Transaction is being processed...'
+            });
+          } else {
+            throw new Error(data.error || 'Redemption failed');
+          }
+        } catch (error) {
+          console.error('Redemption API error:', error);
+          toast.error('Failed to process redemption. Please try again or contact support.');
+        } finally {
+          setPendingRedemption(false);
+          setLoading(null);
+        }
+      }
+    };
+
+    handleRedemption();
+  }, [transactionHash, pendingRedemption, currentGift]);
+
   const handleAction = async (action: string) => {
     if (isLoading) return;
     
@@ -39,6 +84,7 @@ export function MainActions({ currentGift, balance, onPurchase }: MainActionsPro
           if (success && onPurchase(currentGift, currentGift.quantity)) {
             toast.success(`Purchased ${currentGift.quantity} ${currentGift.name} for $${totalCost}`);
           }
+          setLoading(null);
           break;
         }
 
@@ -53,27 +99,34 @@ export function MainActions({ currentGift, balance, onPurchase }: MainActionsPro
             return;
           }
 
-          // Encode the gift data and navigate to send page
           const giftParam = encodeURIComponent(JSON.stringify(currentGift));
           router.push(`/send?asset=${giftParam}`);
+          setLoading(null);
           break;
         }
 
         case 'redeem': {
           if (currentGift.owned <= 0) {
             toast.error("You don't own any of this item to redeem");
+            setLoading(null);
             return;
           }
+
           const success = await redeemGift(currentGift);
           if (success) {
-            const redeemValue = currentGift.price * currentGift.owned;
-            toast.success(`Redeemed successfully! $${redeemValue} added to your balance`);
+            setPendingRedemption(true);
+            // Note: Don't clear loading state here - it will be cleared after the redemption is processed
+          } else {
+            setLoading(null);
           }
           break;
         }
       }
-    } finally {
+    } catch (error) {
+      console.error(`Error in ${action} action:`, error);
+      toast.error(`Failed to ${action}. Please try again.`);
       setLoading(null);
+      setPendingRedemption(false);
     }
   };
 

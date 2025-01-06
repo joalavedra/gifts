@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { useAccount, useWaitForTransactionReceipt } from 'wagmi';
+import { useAccount } from 'wagmi';
 import { useWriteContracts } from 'wagmi/experimental'
 import { CONTRACTS } from '@/lib/contracts/config';
 import { toast } from 'sonner';
@@ -11,14 +11,8 @@ import { parseUnits } from 'viem';
 export function useNFTActions() {
   const { address } = useAccount();
   const [isLoading, setIsLoading] = useState(false);
-  const { data: hash, isPending: isWritePending, error: writeError, writeContracts } = useWriteContracts();
-  const {
-    data: receipt,
-    error: waitError,
-    isLoading: isWaitLoading
-  } = useWaitForTransactionReceipt({
-    hash: hash as `0x${string}`,
-  });
+  const { data: hash, error: writeError, writeContracts } = useWriteContracts();
+
 
   // Handle transaction status and errors
   useEffect(() => {
@@ -29,26 +23,6 @@ export function useNFTActions() {
     }
   }, [writeError]);
 
-  useEffect(() => {
-    if (waitError) {
-      setIsLoading(false);
-      toast.error(waitError.message || 'Transaction failed');
-    }
-  }, [waitError]);
-
-  useEffect(() => {
-    if (receipt?.status === 'success') {
-      setIsLoading(false);
-      toast.success('Transaction successful!');
-    } else if (receipt?.status === 'reverted') {
-      setIsLoading(false);
-      toast.error('Transaction failed');
-    }
-  }, [receipt]);
-
-  useEffect(() => {
-    setIsLoading(isWritePending || isWaitLoading);
-  }, [isWritePending, isWaitLoading]);
 
   const handleTransaction = async (interactions: {
     functionName: string,
@@ -113,6 +87,5 @@ export function useNFTActions() {
     redeemGift,
     isLoading,
     transactionHash: hash,
-    receipt
   };
 }
