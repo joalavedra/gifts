@@ -4,9 +4,13 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Gift } from 'lucide-react';
+import { ancient8Sepolia } from 'viem/chains';
 
-export default function ClaimedPage() {
+export default function ClaimedPage({ params }: { params: { hash: string } }) {
+  const hash = decodeURIComponent(params.hash);
+  const explorerUrl = `${ancient8Sepolia.blockExplorers.default.url}/tx/${hash}`;
+
   return (
     <main className="min-h-screen p-4">
       <motion.div 
@@ -21,7 +25,7 @@ export default function ClaimedPage() {
                 <ArrowLeft className="h-5 w-5" />
               </Button>
             </Link>
-            <h1 className="text-xl font-mono text-orange-500">Already Claimed</h1>
+            <h1 className="text-xl font-mono text-orange-500">Present Claimed!</h1>
             <div className="w-10" />
           </div>
           
@@ -40,17 +44,31 @@ export default function ClaimedPage() {
             🎁
           </motion.div>
 
-          <p className="text-sm font-mono text-white/80 text-center">
-             
-          </p>
-
-          <Link href="/">
-            <Button 
-              className="w-full glass-button hover:bg-white/20 text-white py-6 font-mono"
+          <div className="space-y-4">
+            <a 
+              href={explorerUrl}
+              target="_blank"
+              rel="noopener noreferrer" 
+              className="text-sm font-mono text-white/80 text-center flex items-center justify-center gap-2 hover:text-white transition-colors"
             >
-              Send a Gift
-            </Button>
-          </Link>
+              View transaction on Explorer <ExternalLink className="h-4 w-4" />
+            </a>
+
+            <div className="grid grid-cols-2 gap-4">
+              <Link href="/" className="col-span-2">
+                <Button 
+                  className="w-full glass-button hover:bg-white/20 text-white py-6 font-mono flex items-center justify-center gap-2"
+                >
+                  <Gift className="h-5 w-5" />
+                  Send Your Own Gift
+                </Button>
+              </Link>
+            </div>
+
+            <p className="text-sm text-center text-white/60 font-mono">
+              Thanks for using GiftQuest!
+            </p>
+          </div>
         </Card>
       </motion.div>
     </main>
