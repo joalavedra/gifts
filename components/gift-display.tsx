@@ -10,8 +10,8 @@ import { useAccount, useReadContract } from 'wagmi';
 import { CONTRACTS } from '@/lib/contracts/config';
 
 const GIFTS: Omit<Gift, 'quantity'>[] = [
-  { id: 0, name: 'Master Sword', price: 1, emoji: '⚔️', owned: 0 },
-  { id: 1, name: 'Potion', price: 2, emoji: '🧪', owned: 0 },
+  { id: 0, name: 'Candy Cane', price: 1, emoji: '🍬', owned: 0 },
+  { id: 1, name: 'Gingerbread', price: 2, emoji: '🍪', owned: 0 },
 ];
 
 interface GiftDisplayProps {

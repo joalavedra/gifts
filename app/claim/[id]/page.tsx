@@ -7,57 +7,70 @@ import { Gift } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import type { GiftClaim } from '@/lib/types/gift-claim';
 import { GIFTS } from '@/lib/constants/gifts';
+import { useAccount } from 'wagmi';
 
 export default function ClaimPage({ params }: { params: { id: string } }) {
   const router = useRouter();
-  const [claim, setClaim] = useState<GiftClaim | null>(null);
+  const { address, isConnected } = useAccount();
   const [isLoading, setIsLoading] = useState(true);
+  const [giftInfo, setGiftInfo] = useState<{ assetId: string } | null>(null);
 
   useEffect(() => {
-    async function fetchClaim() {
+    async function fetchGiftInfo() {
       try {
-        const response = await fetch(`/api/claims?id=${params.id}`);
-        const data = await response.json();
-        
-        if (data.success) {
-          setClaim(data.data);
-        } else {
-          router.push(`/claim/${params.id}/claimed`);
+        const encryptedData = JSON.parse(decodeURIComponent(params.id));
+        const response = await fetch('/api/decrypt', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(encryptedData)
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to load gift info');
         }
+
+        const { decryptedData } = await response.json();
+        setGiftInfo(decryptedData);
       } catch (error) {
-        toast.error('Failed to load gift details');
+        toast.error('Invalid gift link');
+        router.push('/invalid');
       } finally {
         setIsLoading(false);
       }
     }
 
-    fetchClaim();
+    fetchGiftInfo();
   }, [params.id, router]);
 
   const handleClaim = async () => {
+    if (!isConnected || !address) {
+      toast.error('Please connect your wallet first');
+      return;
+    }
+
     setIsLoading(true);
     try {
-      const response = await fetch('/api/claims/claim', {
+      const response = await fetch('/api/claim', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          id: params.id,
-          claimedBy: 'user-address' // Replace with actual user address
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          encryptedData: JSON.parse(decodeURIComponent(params.id)),
+          toAddress: address
         })
       });
 
-      const data = await response.json();
-      
-      if (data.success) {
-        toast.success("Gift claimed successfully!");
-        setTimeout(() => {
-          router.push(`/claim/${params.id}/claimed`);
-        }, 1500);
-      } else {
-        throw new Error(data.error);
+      if (!response.ok) {
+        throw new Error('Failed to claim gift');
       }
+
+      toast.success("Gift claimed successfully!");
+      const { hash } = await response.json();
+      router.push(`/claim/${params.id}/claimed?hash=${hash}`);
     } catch (error) {
       toast.error('Failed to claim gift');
     } finally {
@@ -77,20 +90,19 @@ export default function ClaimPage({ params }: { params: { id: string } }) {
     );
   }
 
-  if (!claim) {
-    return router.push(`/claim/${params.id}/claimed`);
-  }
+  if (!giftInfo) return null;
 
-  const gift = GIFTS.find(g => g.id === claim.giftId);
+  const gift = GIFTS.find(g => g.id === Number(giftInfo.assetId));
+  if (!gift) return null;
 
   return (
     <main className="min-h-screen bg-[#E60012] text-white p-4">
       <div className="max-w-md mx-auto">
         <Card className="bg-[#ffffff20] border-none p-8 text-center space-y-6">
-          <h1 className="text-xl mb-4">You got {claim.quantity} {gift?.name}!</h1>
+          <h1 className="text-xl mb-4">You got 1 {gift.name}!</h1>
           
           <div className="text-lg">
-            {gift?.emoji} {claim.quantity} = ${(gift?.price ?? 0) * claim.quantity}
+            {gift.emoji} 1 = ${gift.price}
           </div>
 
           <div className="text-6xl animate-bounce my-6">

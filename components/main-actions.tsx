@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { ShoppingCart, Send, Gift, Loader2 } from 'lucide-react';
 import { toast } from "sonner";
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { useNFTActions } from '@/lib/hooks/useNFTActions';
@@ -20,7 +19,7 @@ interface MainActionsProps {
 export function MainActions({ currentGift, balance, onPurchase }: MainActionsProps) {
   const router = useRouter();
   const [loading, setLoading] = useState<string | null>(null);
-  const { buyGift, sendGift, redeemGift, isLoading } = useNFTActions();
+  const { buyGift, redeemGift, isLoading } = useNFTActions();
   const handleAction = async (action: string) => {
     if (isLoading) return;
     
@@ -107,13 +106,6 @@ export function MainActions({ currentGift, balance, onPurchase }: MainActionsPro
           </motion.div>
         ))}
       </div>
-
-      <Link 
-        href="/claim/test" 
-        className="block text-center text-xs font-mono text-white/60 hover:text-orange-500 transition-colors"
-      >
-        Test Claim Page
-      </Link>
     </div>
   );
 }

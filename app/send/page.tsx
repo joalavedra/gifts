@@ -6,34 +6,108 @@ import { PageHeader } from '@/components/layout/page-header';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import { Copy, Link as LinkIcon, CheckCircle } from 'lucide-react';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import Link from 'next/link';
+import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
+import { useAccount } from 'wagmi';
+import { BaseError, createWalletClient, custom } from 'viem';
+import { ancient8Sepolia } from 'viem/chains';
+import { erc7715Actions } from 'viem/experimental';
+import { CONTRACTS } from '@/lib/contracts/config';
 
-// Add type for the asset
-interface Asset {
-  id: string;
-  name: string;
-  emoji: string;
-  quantity: number;
-  // Add other asset properties as needed
-}
-
-// Update component to receive props
 export default function SendPage({
   searchParams,
 }: {
   searchParams: { asset?: string };
 }) {
   const [isCopying, setIsCopying] = useState(false);
-  
-  // Parse the asset from searchParams
+  const [isCreatingLink, setIsCreatingLink] = useState(false);
+  const [generatedLink, setGeneratedLink] = useState<string | null>(null);
+  const {connector, address} = useAccount();
+  const [sessionKey, setSessionKey] = useState<string | null>(null);
+  const [sessionError, setSessionError] = useState<BaseError | null>(null);
   const asset = searchParams.asset ? JSON.parse(decodeURIComponent(searchParams.asset)) : null;
-  const claimLink = `https://giftquest1.vercel.app/claim/${asset?.id || 'invalid'}`;
+
+  const handleGrantPermissions = useCallback(async() => {
+    setIsCreatingLink(true);
+    try {
+      const provider = await connector?.getProvider()
+      const privateKey = generatePrivateKey();
+      const accountSession = privateKeyToAccount(privateKey).address;
+      setSessionKey(accountSession);
+      
+      const walletClient = createWalletClient({
+        chain: ancient8Sepolia, 
+        transport: custom(provider as any),
+      }).extend(erc7715Actions());
+
+      const permission = await walletClient.grantPermissions({
+        signer:{
+          type: "account",
+          data:{
+            id: accountSession
+          }
+        },
+        expiry: 60 * 60 * 24,
+        permissions: [
+          {
+            type: 'contract-call',
+            data: {
+              address: CONTRACTS.GIFT_TOKEN.address,
+              calls: ["safeTransferFrom"]
+            },
+            policies: []
+          }
+        ],
+      });
+
+      // Encrypt the private key
+      const response = await fetch('/api/encrypt', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          privateKey,
+          permissionsContext: permission.permissionsContext,
+          assetId: asset?.id,
+          address: address
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to encrypt key');
+      }
+
+      const { encryptedData } = await response.json();
+      const linkData = encodeURIComponent(JSON.stringify(encryptedData));
+      const newLink = `${window.location.origin}/claim/${linkData}`;
+      setGeneratedLink(newLink);
+
+      // Store in localStorage with timestamp
+      const storedLinks = JSON.parse(localStorage.getItem('giftLinks') || '[]');
+      storedLinks.push({
+        link: newLink,
+        asset: asset?.name,
+        timestamp: Date.now(),
+      });
+      localStorage.setItem('giftLinks', JSON.stringify(storedLinks));
+
+    } catch (e) {
+      const error = e as BaseError;
+      setSessionError(error);
+      toast.error('Failed to create gift link');
+    } finally {
+      setIsCreatingLink(false);
+    }
+  }, [asset, connector]);
+
 
   const copyLink = async () => {
+    if (!generatedLink) return;
     setIsCopying(true);
     try {
-      await navigator.clipboard.writeText(claimLink);
+      await navigator.clipboard.writeText(generatedLink);
       toast.success('Gift link copied!');
     } catch (error) {
       toast.error('Failed to copy link');
@@ -58,7 +132,6 @@ export default function SendPage({
             </div>
           )}
 
-
           <div className="space-y-4 text-white/80 font-mono">
             <div className="flex items-center gap-2">
               <CheckCircle className="h-4 w-4 text-orange-500" />
@@ -66,30 +139,51 @@ export default function SendPage({
                 {asset ? `${asset.quantity} ${asset.name} is now claimable` : 'No asset selected'}
               </p>
             </div>
-            <div className="flex items-center gap-2">
-              <Copy className="h-4 w-4 text-orange-500" />
-              <p className="text-sm">Copy link and send to a friend</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <LinkIcon className="h-4 w-4 text-orange-500" />
-              <p className="text-sm">View all your claim links</p>
-            </div>
+            {generatedLink ? (
+              <>
+                <div className="flex items-center gap-2">
+                  <Copy className="h-4 w-4 text-orange-500" />
+                  <p className="text-sm">Copy link and send to a friend</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <LinkIcon className="h-4 w-4 text-orange-500" />
+                  <p className="text-sm">View all your claim links</p>
+                </div>
+              </>
+            ) : (
+              <div className="flex items-center gap-2">
+                <LinkIcon className="h-4 w-4 text-orange-500" />
+                <p className="text-sm">Create a new gift link</p>
+              </div>
+            )}
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <Button
-              onClick={copyLink}
-              className="glass-button hover:bg-white/20 text-white font-mono"
-            >
-              {isCopying ? 'Copied ✓' : 'Copy link'}
-            </Button>
-            <Link href="/history">
+            {!generatedLink ? (
               <Button
-                className="w-full glass-button hover:bg-white/20 text-white font-mono"
+                onClick={handleGrantPermissions}
+                disabled={isCreatingLink}
+                className="col-span-2 glass-button hover:bg-white/20 text-white font-mono"
               >
-                View links
+                {isCreatingLink ? 'Creating...' : 'Create link'}
               </Button>
-            </Link>
+            ) : (
+              <>
+                <Button
+                  onClick={copyLink}
+                  className="glass-button hover:bg-white/20 text-white font-mono"
+                >
+                  {isCopying ? 'Copied ✓' : 'Copy link'}
+                </Button>
+                <Link href="/history">
+                  <Button
+                    className="w-full glass-button hover:bg-white/20 text-white font-mono"
+                  >
+                    View links
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
         </Card>
       </motion.div>

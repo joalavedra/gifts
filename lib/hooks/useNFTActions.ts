@@ -99,16 +99,6 @@ export function useNFTActions() {
       { contract: CONTRACTS.GIFT_TOKEN, args: [address, gift.id, quantity, CONTRACTS.USDC.address, giftPrice, allowlistProof, '0x'], functionName: 'claim' }
     ]);
   };
-
-  const sendGift = async (gift: Gift, quantity: number, toAddress: string) => {
-    if (!address) {
-      toast.error('Please connect your wallet');
-      return false;
-    }
-
-    return handleTransaction([{ contract: CONTRACTS.GIFT_TOKEN, args: [address, toAddress, BigInt(gift.id), BigInt(quantity), '0x'], functionName: 'safeTransferFrom' }]);
-  };
-
   const redeemGift = async (gift: Gift, quantity: number) => {
     if (!address) {
       toast.error('Please connect your wallet');
@@ -120,7 +110,6 @@ export function useNFTActions() {
 
   return {
     buyGift,
-    sendGift,
     redeemGift,
     isLoading,
     transactionHash: hash,
