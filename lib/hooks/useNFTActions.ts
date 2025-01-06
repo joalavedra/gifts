@@ -83,7 +83,7 @@ export function useNFTActions() {
 
     const value = parseUnits(String(gift.price * quantity), 6);
     const giftPrice = parseUnits(String(gift.price), 6);
-    console.log('gift', gift);
+
     const proof = [
       "0x0000000000000000000000000000000000000000000000000000000000000000",
     ];
@@ -99,13 +99,13 @@ export function useNFTActions() {
       { contract: CONTRACTS.GIFT_TOKEN, args: [address, gift.id, quantity, CONTRACTS.USDC.address, giftPrice, allowlistProof, '0x'], functionName: 'claim' }
     ]);
   };
-  const redeemGift = async (gift: Gift, quantity: number) => {
+  const redeemGift = async (gift: Gift) => {
     if (!address) {
       toast.error('Please connect your wallet');
       return false;
     }
 
-    return handleTransaction([{ args: [address, BigInt(gift.id), BigInt(quantity)], functionName: 'burn', contract: CONTRACTS.GIFT_TOKEN }]);
+    return handleTransaction([{ args: [address, [BigInt(gift.id)], [1]], functionName: 'burnBatch', contract: CONTRACTS.GIFT_TOKEN }]);
   };
 
   return {

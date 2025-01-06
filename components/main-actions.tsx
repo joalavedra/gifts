@@ -64,7 +64,7 @@ export function MainActions({ currentGift, balance, onPurchase }: MainActionsPro
             toast.error("You don't own any of this item to redeem");
             return;
           }
-          const success = await redeemGift(currentGift, currentGift.owned);
+          const success = await redeemGift(currentGift);
           if (success) {
             const redeemValue = currentGift.price * currentGift.owned;
             toast.success(`Redeemed successfully! $${redeemValue} added to your balance`);

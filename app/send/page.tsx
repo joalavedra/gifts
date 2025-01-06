@@ -162,7 +162,7 @@ export default function SendPage({
             {!generatedLink ? (
               <Button
                 onClick={handleGrantPermissions}
-                disabled={isCreatingLink}
+                disabled={isCreatingLink || !asset}
                 className="col-span-2 glass-button hover:bg-white/20 text-white font-mono"
               >
                 {isCreatingLink ? 'Creating...' : 'Create link'}
