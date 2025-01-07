@@ -11,7 +11,7 @@ import { parseUnits } from 'viem';
 export function useNFTActions() {
   const { address } = useAccount();
   const [isLoading, setIsLoading] = useState(false);
-  const { data: hash, error: writeError, writeContracts } = useWriteContracts();
+  const { data: hash, error: writeError, writeContracts, writeContractsAsync, isSuccess } = useWriteContracts();
 
 
   // Handle transaction status and errors
@@ -31,7 +31,7 @@ export function useNFTActions() {
     contract: typeof CONTRACTS.GIFT_TOKEN | typeof CONTRACTS.USDC
   }[]): Promise<boolean> => {
     try {
-      writeContracts({
+      const result = await writeContractsAsync({
         contracts: interactions.map(({ functionName, args, value, contract }) => ({
           address: contract.address,
           abi: contract.abi,
@@ -42,7 +42,7 @@ export function useNFTActions() {
       });
 
       // Return true if we get here without error
-      return !writeError;
+      return !!result;
     } catch (error: any) {
       toast.error(error.message || 'Transaction failed');
       return false;
@@ -87,5 +87,6 @@ export function useNFTActions() {
     redeemGift,
     isLoading,
     transactionHash: hash,
+    error: writeError
   };
 }

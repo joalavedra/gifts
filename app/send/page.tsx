@@ -175,7 +175,7 @@ export default function SendPage() {
             <div className="flex items-center gap-2">
               <CheckCircle className="h-4 w-4 text-orange-500" />
               <p className="text-sm">
-                {asset ? `${asset.quantity} ${asset.name} is now claimable` : 'No asset selected'}
+                {asset ? `1 ${asset.name} will be claimable` : 'No asset selected'}
               </p>
             </div>
             {generatedLink ? (

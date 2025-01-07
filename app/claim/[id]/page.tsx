@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Gift } from 'lucide-react';
+import { Gift, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
@@ -13,7 +13,8 @@ import { useAccount } from 'wagmi';
 export default function ClaimPage({ params }: { params: { id: string } }) {
   const router = useRouter();
   const { address, isConnected } = useAccount();
-  const [isLoading, setIsLoading] = useState(true);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [isClaimLoading, setIsClaimLoading] = useState(false);
   const [giftInfo, setGiftInfo] = useState<{ assetId: string } | null>(null);
 
   useEffect(() => {
@@ -38,7 +39,7 @@ export default function ClaimPage({ params }: { params: { id: string } }) {
         toast.error('Invalid gift link');
         router.push('/invalid');
       } finally {
-        setIsLoading(false);
+        setIsInitialLoading(false);
       }
     }
 
@@ -51,7 +52,7 @@ export default function ClaimPage({ params }: { params: { id: string } }) {
       return;
     }
 
-    setIsLoading(true);
+    setIsClaimLoading(true);
     try {
       const response = await fetch('/api/claim', {
         method: 'POST',
@@ -73,12 +74,11 @@ export default function ClaimPage({ params }: { params: { id: string } }) {
       router.push(`/claim/${params.id}/claimed?hash=${hash}`);
     } catch (error) {
       toast.error('Failed to claim gift');
-    } finally {
-      setIsLoading(false);
+      setIsClaimLoading(false);
     }
   };
 
-  if (isLoading) {
+  if (isInitialLoading) {
     return (
       <main className="min-h-screen bg-[#E60012] text-white p-4">
         <div className="max-w-md mx-auto">
@@ -129,15 +129,22 @@ export default function ClaimPage({ params }: { params: { id: string } }) {
           </div>
 
           <Button 
-            className="w-full bg-white text-[#E60012] hover:bg-white/90"
+            className="w-full bg-white text-[#E60012] hover:bg-white/90 transition-all duration-200"
             onClick={handleClaim}
-            disabled={isLoading}
+            disabled={isClaimLoading}
           >
-            {isLoading ? 'Claiming...' : 'Claim to enjoy'}
+            {isClaimLoading ? (
+              <span className="flex items-center justify-center gap-2">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Claiming...
+              </span>
+            ) : (
+              'Claim to enjoy'
+            )}
           </Button>
 
           <div className="text-xs opacity-80">
-            <Link href="/">
+            <Link href="/" className="hover:opacity-100 transition-opacity">
               Want to send your own gifts? Click here
             </Link>
           </div>
