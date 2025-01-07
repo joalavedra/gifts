@@ -4,6 +4,7 @@ import { createPublicClient, decodeEventLog, http, parseAbiItem, parseUnits } fr
 import { ancient8Sepolia } from 'viem/chains';
 import Openfort from '@openfort/openfort-node';
 import { GIFTS } from '@/lib/constants/gifts';
+import { CONTRACTS } from '@/lib/contracts/config';
 
 // Initialize OpenFort client
 const openfort = new Openfort(process.env.NEXT_PRIVATE_OPENFORT_SECRET_KEY!);
@@ -33,7 +34,7 @@ export async function POST(request: Request) {
             hash: transactionHash as `0x${string}`
         });
         // Find the TransferBatch event
-        const transferEvent = receipt.logs[1]
+        const transferEvent = receipt.logs.find(log => log.address.toLowerCase() === CONTRACTS.GIFT_TOKEN.address.toLowerCase())
 
         if (!transferEvent) {
             return NextResponse.json({ error: 'Burn event not found' }, { status: 400 });
