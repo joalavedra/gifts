@@ -51,9 +51,7 @@ export function MainActions({ currentGift, balance }: MainActionsProps) {
           const data = await response.json();
           
           if (data.success && data.hash) {
-            toast.success(`Redeemed successfully! $${currentGift.price} added to your balance`, {
-              description: 'Transaction is being processed...'
-            });
+            toast.success(`Redeemed successfully! $${currentGift.price} added to your balance`);
           } else {
             throw new Error(data.error || 'Redemption failed');
           }
