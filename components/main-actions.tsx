@@ -22,6 +22,13 @@ export function MainActions({ currentGift, balance, onPurchase }: MainActionsPro
   const { buyGift, redeemGift, isLoading, transactionHash } = useNFTActions();
   const [pendingRedemption, setPendingRedemption] = useState(false);
 
+  // Reset loading state when transaction is no longer loading
+  useEffect(() => {
+    if (!isLoading && loading && !pendingRedemption) {
+      setLoading(null);
+    }
+  }, [isLoading, loading, pendingRedemption]);
+
   // Watch for transaction hash when redeeming
   useEffect(() => {
     const handleRedemption = async () => {
@@ -45,8 +52,7 @@ export function MainActions({ currentGift, balance, onPurchase }: MainActionsPro
           const data = await response.json();
           
           if (data.success && data.hash) {
-            const redeemValue = currentGift.price * currentGift.owned;
-            toast.success(`Redeemed successfully! $${redeemValue} added to your balance`, {
+            toast.success(`Redeemed successfully! $${currentGift.price} added to your balance`, {
               description: 'Transaction is being processed...'
             });
           } else {
@@ -63,20 +69,21 @@ export function MainActions({ currentGift, balance, onPurchase }: MainActionsPro
     };
 
     handleRedemption();
-  }, [transactionHash, pendingRedemption, currentGift]);
+  }, [transactionHash, pendingRedemption, currentGift.price, currentGift.owned]);
 
   const handleAction = async (action: string) => {
-    if (isLoading) return;
-    
-    setLoading(action);
+    if (isLoading || loading) return;
     
     try {
+      setLoading(action);
+
       switch (action) {
         case 'buy': {
           const totalCost = currentGift.price * currentGift.quantity;
           const formattedBalance = formatUnits(balance, 6);
           if (Number(formattedBalance) < totalCost) {
             toast.error(`Insufficient balance. Need $${totalCost} but only have $${formattedBalance}`);
+            setLoading(null);
             return;
           }
 
@@ -84,24 +91,24 @@ export function MainActions({ currentGift, balance, onPurchase }: MainActionsPro
           if (success && onPurchase(currentGift, currentGift.quantity)) {
             toast.success(`Purchased ${currentGift.quantity} ${currentGift.name} for $${totalCost}`);
           }
-          setLoading(null);
           break;
         }
 
         case 'send': {
           if (currentGift.owned <= 0) {
             toast.error("You don't own any of this item to send");
+            setLoading(null);
             return;
           }
 
           if (currentGift.owned < currentGift.quantity) {
             toast.error(`You only have ${currentGift.owned} ${currentGift.name} available`);
+            setLoading(null);
             return;
           }
 
           const giftParam = encodeURIComponent(JSON.stringify(currentGift));
           router.push(`/send?asset=${giftParam}`);
-          setLoading(null);
           break;
         }
 
@@ -111,13 +118,19 @@ export function MainActions({ currentGift, balance, onPurchase }: MainActionsPro
             setLoading(null);
             return;
           }
+
           const success = await redeemGift(currentGift);
           if (success) {
             setPendingRedemption(true);
-            // Note: Don't clear loading state here - it will be cleared after the redemption is processed
+            // Loading state will be cleared after redemption is processed
           } else {
             setLoading(null);
           }
+          break;
+        }
+
+        default: {
+          setLoading(null);
           break;
         }
       }
