@@ -6,7 +6,7 @@ import { PageHeader } from '@/components/layout/page-header';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import { Copy, Link as LinkIcon, CheckCircle } from 'lucide-react';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import { useAccount } from 'wagmi';
@@ -14,6 +14,15 @@ import { BaseError, createWalletClient, custom } from 'viem';
 import { ancient8Sepolia } from 'viem/chains';
 import { erc7715Actions } from 'viem/experimental';
 import { CONTRACTS } from '@/lib/contracts/config';
+
+interface Asset {
+  id: number;
+  name: string;
+  price: number;
+  emoji: string;
+  owned: number;
+  quantity: number;
+}
 
 export default function SendPage({
   searchParams,
@@ -26,7 +35,30 @@ export default function SendPage({
   const {connector, address} = useAccount();
   const [sessionKey, setSessionKey] = useState<string | null>(null);
   const [sessionError, setSessionError] = useState<BaseError | null>(null);
-  const asset = searchParams.asset ? JSON.parse(decodeURIComponent(searchParams.asset)) : null;
+  const asset = useMemo(() => {
+    
+    try {
+      const decoded = decodeURIComponent(searchParams.asset!);
+      const parsed = JSON.parse(decoded) as Asset;
+      
+      // Validate required fields
+      if (
+        typeof parsed.id !== 'number' ||
+        typeof parsed.name !== 'string' ||
+        typeof parsed.price !== 'number' ||
+        typeof parsed.emoji !== 'string' ||
+        typeof parsed.quantity !== 'number' ||
+        parsed.quantity < 1
+      ) {
+        throw new Error('Invalid asset format');
+      }
+      
+      return parsed;
+    } catch (error) {
+      console.error('Failed to parse asset:', error);
+      return null;
+    }
+  }, [searchParams.asset]);
 
   const handleGrantPermissions = useCallback(async() => {
     setIsCreatingLink(true);
@@ -162,7 +194,7 @@ export default function SendPage({
             {!generatedLink ? (
               <Button
                 onClick={handleGrantPermissions}
-                disabled={isCreatingLink}
+                disabled={isCreatingLink || !asset}
                 className="col-span-2 glass-button hover:bg-white/20 text-white font-mono"
               >
                 {isCreatingLink ? 'Creating...' : 'Create link'}

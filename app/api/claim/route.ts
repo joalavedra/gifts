@@ -72,7 +72,7 @@ export async function POST(request: Request) {
       player: playerId,
       policy: POLICY_ID,
       chainId: CHAIN_ID,
-      optimistic: true,
+      optimistic: false,
       interactions: [interaction_transfer],
     });
 
