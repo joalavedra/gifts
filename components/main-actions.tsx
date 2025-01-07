@@ -5,7 +5,7 @@ import { ShoppingCart, Send, Gift, Loader2 } from 'lucide-react';
 import { toast } from "sonner";
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNFTActions } from '@/lib/hooks/useNFTActions';
 import { Gift as GiftType } from '@/app/page';
 import { formatUnits } from 'viem';
@@ -20,6 +20,7 @@ export function MainActions({ currentGift, balance }: MainActionsProps) {
   const [loading, setLoading] = useState<string | null>(null);
   const { buyGift, redeemGift, isLoading, transactionHash, error } = useNFTActions();
   const [pendingRedemption, setPendingRedemption] = useState(false);
+  const redemptionInProgressRef = useRef(false);
 
   // Reset loading state when transaction is no longer loading
   useEffect(() => {
@@ -31,44 +32,49 @@ export function MainActions({ currentGift, balance }: MainActionsProps) {
   // Watch for transaction hash when redeeming
   useEffect(() => {
     const handleRedemption = async () => {
-      if (pendingRedemption && transactionHash) {
-        try {
-          // Call redemption API endpoint
-          const response = await fetch('/api/redeem', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              transactionHash,
-            }),
-          });
-
-          if (!response.ok) {
-            throw new Error('Redemption API call failed');
-          }
-
-          const data = await response.json();
-          
-          if (data.success && data.hash) {
-            toast.success(`Redeemed successfully! $${currentGift.price} added to your balance`, {
-              description: 'Transaction is being processed...'
-            });
-          } else {
-            throw new Error(data.error || 'Redemption failed');
-          }
-        } catch (error) {
-          console.error('Redemption API error:', error);
-          toast.error('Failed to process redemption. Please try again or contact support.');
-        } finally {
-          setPendingRedemption(false);
-          setLoading(null);
+      // Check if redemption is already in progress or conditions aren't met
+      if (!pendingRedemption || !transactionHash || redemptionInProgressRef.current) {
+        return;
+      }
+  
+      // Set the ref to true to prevent multiple executions
+      redemptionInProgressRef.current = true;
+  
+      try {
+        const response = await fetch('/api/redeem', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            transactionHash,
+          }),
+        });
+  
+        if (!response.ok) {
+          throw new Error('Redemption API call failed');
         }
+  
+        const data = await response.json();
+        
+        if (data.success && data.hash) {
+          toast.success(`Redeemed successfully! $${currentGift.price} added to your balance`);
+        } else {
+          throw new Error(data.error || 'Redemption failed');
+        }
+      } catch (error) {
+        console.error('Redemption API error:', error);
+        toast.error('Failed to process redemption. Please try again or contact support.');
+      } finally {
+        setPendingRedemption(false);
+        setLoading(null);
+        // Reset the ref
+        redemptionInProgressRef.current = false;
       }
     };
-
+  
     handleRedemption();
-  }, [transactionHash, pendingRedemption, currentGift.price, currentGift.owned]);
+  }, [transactionHash, pendingRedemption, currentGift.price]);
 
   const handleAction = async (action: string) => {
     if (isLoading || loading) return;
