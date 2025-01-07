@@ -6,7 +6,7 @@ import { PageHeader } from '@/components/layout/page-header';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import { Copy, Link as LinkIcon, CheckCircle } from 'lucide-react';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import { useAccount } from 'wagmi';
@@ -14,6 +14,7 @@ import { BaseError, createWalletClient, custom } from 'viem';
 import { ancient8Sepolia } from 'viem/chains';
 import { erc7715Actions } from 'viem/experimental';
 import { CONTRACTS } from '@/lib/contracts/config';
+import { useSearchParams } from 'next/navigation';
 
 interface Asset {
   id: number;
@@ -24,43 +25,50 @@ interface Asset {
   quantity: number;
 }
 
-export default function SendPage({
-  searchParams,
-}: {
-  searchParams: { asset?: string };
-}) {
+export default function SendPage() {
   const [isCopying, setIsCopying] = useState(false);
   const [isCreatingLink, setIsCreatingLink] = useState(false);
   const [generatedLink, setGeneratedLink] = useState<string | null>(null);
-  const {connector, address} = useAccount();
+  const { connector, address } = useAccount();
   const [sessionKey, setSessionKey] = useState<string | null>(null);
   const [sessionError, setSessionError] = useState<BaseError | null>(null);
-  const asset = useMemo(() => {
-    
-    try {
-      const decoded = decodeURIComponent(searchParams.asset!);
-      const parsed = JSON.parse(decoded) as Asset;
+  const [asset, setAsset] = useState<Asset | null>(null);
+  
+  const searchParams = useSearchParams();
+  
+  useEffect(() => {
+    const parseAsset = () => {
+      const assetParam = searchParams.get('asset');
+      if (!assetParam) return null;
       
-      // Validate required fields
-      if (
-        typeof parsed.id !== 'number' ||
-        typeof parsed.name !== 'string' ||
-        typeof parsed.price !== 'number' ||
-        typeof parsed.emoji !== 'string' ||
-        typeof parsed.quantity !== 'number' ||
-        parsed.quantity < 1
-      ) {
-        throw new Error('Invalid asset format');
+      try {
+        const parsed = JSON.parse(decodeURIComponent(assetParam)) as Asset;
+        
+        // Validate required fields
+        if (
+          typeof parsed.id !== 'number' ||
+          typeof parsed.name !== 'string' ||
+          typeof parsed.price !== 'number' ||
+          typeof parsed.emoji !== 'string' ||
+          typeof parsed.quantity !== 'number' ||
+          parsed.quantity < 1
+        ) {
+          throw new Error('Invalid asset format');
+        }
+        
+        setAsset(parsed);
+      } catch (error) {
+        console.error('Failed to parse asset:', error);
+        setAsset(null);
       }
-      
-      return parsed;
-    } catch (error) {
-      console.error('Failed to parse asset:', error);
-      return null;
-    }
-  }, [searchParams.asset]);
+    };
+
+    parseAsset();
+  }, [searchParams]);
 
   const handleGrantPermissions = useCallback(async() => {
+    if (!asset) return;
+    
     setIsCreatingLink(true);
     try {
       const provider = await connector?.getProvider()
@@ -102,7 +110,7 @@ export default function SendPage({
         body: JSON.stringify({
           privateKey,
           permissionsContext: permission.permissionsContext,
-          assetId: asset?.id,
+          assetId: asset.id,
           address: address
         })
       });
@@ -120,7 +128,7 @@ export default function SendPage({
       const storedLinks = JSON.parse(localStorage.getItem('giftLinks') || '[]');
       storedLinks.push({
         link: newLink,
-        asset: asset?.name,
+        asset: asset.name,
         timestamp: Date.now(),
       });
       localStorage.setItem('giftLinks', JSON.stringify(storedLinks));
@@ -132,8 +140,7 @@ export default function SendPage({
     } finally {
       setIsCreatingLink(false);
     }
-  }, [asset, connector]);
-
+  }, [asset, connector, address]);
 
   const copyLink = async () => {
     if (!generatedLink) return;
