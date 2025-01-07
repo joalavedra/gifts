@@ -13,7 +13,6 @@ const CONTRACT_ID = process.env.NEXT_PUBLIC_USDC_CONTRACT_ID!;
 const POLICY_ID = process.env.NEXT_PUBLIC_POLICY_ID!;
 const CHAIN_ID = parseInt('28122024');
 const PLAYER_USDC_ID = process.env.NEXT_PUBLIC_PLAYER_ID!;
-const fromAddress = process.env.NEXT_PUBLIC_FROM_ADDRESS!;
 
 // TransferBatch event ABI - this is the event emitted on burn
 const transferBatchEventAbi = parseAbiItem(
@@ -50,16 +49,11 @@ export async function POST(request: Request) {
         // Calculate total value to transfer in USDC
         const { ids, from } = decodedLog.args;
         const price = GIFTS[Number(ids[0])].price;
-        console.log('Price:', price);
-        console.log('From:', from);
-        console.log('From Address:', fromAddress);
-
         // Create USDC transfer transaction
         const interaction_transfer = {
             contract: CONTRACT_ID,
-            functionName: 'transferFrom',
+            functionName: 'transfer',
             functionArgs: [
-                fromAddress,
                 from,
                 String(parseUnits(String(price), 6))
             ],
@@ -76,7 +70,7 @@ export async function POST(request: Request) {
 
         return NextResponse.json({
             success: true,
-            transactionIntent,
+            transactionIntent: transactionIntent.id,
             hash: transactionIntent.response?.transactionHash,
         });
 

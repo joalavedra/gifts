@@ -111,7 +111,6 @@ export function MainActions({ currentGift, balance, onPurchase }: MainActionsPro
             setLoading(null);
             return;
           }
-
           const success = await redeemGift(currentGift);
           if (success) {
             setPendingRedemption(true);
