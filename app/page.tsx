@@ -30,38 +30,16 @@ export default function WelcomePage() {
   });
 
   const [currentGift, setCurrentGift] = useState<Gift>({ 
-    id: 1,
-    name: 'Master Sword',
-    price: 15,
-    emoji: '⚔️',
-    owned: 2,
-    quantity: 1
-  });
-
-  const [inventory, setInventory] = useState<Record<number, number>>({
-    1: 2, // Master Sword: 2
-    3: 1, // Shield: 1
-    4: 3  // Bow: 3
+    id: 0,
+    name: 'Candy Cane',
+    price: 1,
+    emoji: '🍬',
+    owned: 0,
+    quantity: 0
   });
 
   const handleGiftChange = (gift: Gift) => {
     setCurrentGift({ ...gift });
-  };
-
-  const handlePurchase = (gift: Gift, quantity: number) => {
-    const totalCost = gift.price * quantity;
-    if ((balance ?? 0) >= totalCost) {
-      setInventory(prev => ({
-        ...prev,
-        [gift.id]: (prev[gift.id] || 0) + quantity
-      }));
-      setCurrentGift(prev => ({
-        ...prev,
-        owned: (inventory[gift.id] || 0) + quantity
-      }));
-      return true;
-    }
-    return false;
   };
 
   return (
@@ -80,12 +58,10 @@ export default function WelcomePage() {
         <div className="space-y-6">
           <GiftDisplay 
             onGiftChange={handleGiftChange} 
-            inventory={inventory}
           />
           <MainActions 
             currentGift={currentGift}
             balance={balance as bigint ?? 0}
-            onPurchase={handlePurchase}
           />
         </div>
       </motion.div>

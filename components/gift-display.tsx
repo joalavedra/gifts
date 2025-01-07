@@ -16,10 +16,9 @@ const GIFTS: Omit<Gift, 'quantity'>[] = [
 
 interface GiftDisplayProps {
   onGiftChange: (gift: Gift) => void;
-  inventory: Record<number, number>;
 }
 
-export function GiftDisplay({ onGiftChange, inventory }: GiftDisplayProps) {
+export function GiftDisplay({ onGiftChange }: GiftDisplayProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const { address } = useAccount();
   const [quantity, setQuantity] = useState(1);
@@ -35,7 +34,7 @@ export function GiftDisplay({ onGiftChange, inventory }: GiftDisplayProps) {
   // Get current gift with updated inventory from both props and onchain data
   const getCurrentGift = (index: number): Gift => {
     const baseGift = GIFTS[index];
-    let ownedAmount = inventory[baseGift.id] || 0;
+    let ownedAmount = 0;
 
     // Update owned amount if onchain data is available
     if (isSuccess && onchainInventory) {
@@ -53,7 +52,7 @@ export function GiftDisplay({ onGiftChange, inventory }: GiftDisplayProps) {
   // Effect to sync gift changes with parent
   useEffect(() => {
     onGiftChange(getCurrentGift(currentIndex));
-  }, [currentIndex, quantity, inventory, onchainInventory, isSuccess]);
+  }, [currentIndex, quantity, onchainInventory, isSuccess]);
 
   const handlePrevious = () => {
     const newIndex = (currentIndex - 1 + GIFTS.length) % GIFTS.length;

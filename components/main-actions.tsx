@@ -13,21 +13,20 @@ import { formatUnits } from 'viem';
 interface MainActionsProps {
   currentGift: GiftType;
   balance: bigint;
-  onPurchase: (gift: GiftType, quantity: number) => boolean;
 }
 
-export function MainActions({ currentGift, balance, onPurchase }: MainActionsProps) {
+export function MainActions({ currentGift, balance }: MainActionsProps) {
   const router = useRouter();
   const [loading, setLoading] = useState<string | null>(null);
-  const { buyGift, redeemGift, isLoading, transactionHash } = useNFTActions();
+  const { buyGift, redeemGift, isLoading, transactionHash, error } = useNFTActions();
   const [pendingRedemption, setPendingRedemption] = useState(false);
 
   // Reset loading state when transaction is no longer loading
   useEffect(() => {
-    if (!isLoading && loading && !pendingRedemption) {
+    if (error) {
       setLoading(null);
     }
-  }, [isLoading, loading, pendingRedemption]);
+  }, [error]);
 
   // Watch for transaction hash when redeeming
   useEffect(() => {
@@ -88,8 +87,9 @@ export function MainActions({ currentGift, balance, onPurchase }: MainActionsPro
           }
 
           const success = await buyGift(currentGift, currentGift.quantity);
-          if (success && onPurchase(currentGift, currentGift.quantity)) {
+          if (success) {
             toast.success(`Purchased ${currentGift.quantity} ${currentGift.name} for $${totalCost}`);
+            setLoading(null);
           }
           break;
         }
