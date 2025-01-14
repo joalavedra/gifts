@@ -96,7 +96,17 @@ export default function SendPage() {
               address: CONTRACTS.GIFT_TOKEN.address,
               calls: ["safeTransferFrom"]
             },
-            policies: []
+            policies: [
+              {
+                type: 
+                {
+                  custom: "usage-limit"
+                },
+                data: {
+                  limit: 1
+                }
+              }
+            ]
           }
         ],
       });
