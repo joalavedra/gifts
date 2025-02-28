@@ -10,6 +10,7 @@ const config = createConfig({
   transports: {
     [ancient8Sepolia.id]: http()
   },
+  ssr: true,
   connectors: [
     injected()]
 });
