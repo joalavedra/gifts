@@ -173,7 +173,7 @@ export default function SendPage() {
         className="max-w-md mx-auto"
       >
         <Card className="glass-card border-none p-8 space-y-6">
-          <PageHeader title="Send Gift" />
+          <PageHeader title="Send stables" />
 
           {asset && (
             <div className="flex justify-center items-center">
@@ -181,9 +181,9 @@ export default function SendPage() {
             </div>
           )}
 
-          <div className="space-y-4 text-white/80 font-mono">
+          <div className="space-y-4 text-white/80 font-inter">
             <div className="flex items-center gap-2">
-              <CheckCircle className="h-4 w-4 text-orange-500" />
+              <CheckCircle className="h-4 w-4 text-emerald-500" />
               <p className="text-sm">
                 {asset ? `1 ${asset.name} will be claimable` : 'No asset selected'}
               </p>
@@ -191,17 +191,17 @@ export default function SendPage() {
             {generatedLink ? (
               <>
                 <div className="flex items-center gap-2">
-                  <Copy className="h-4 w-4 text-orange-500" />
+                  <Copy className="h-4 w-4 text-emerald-500" />
                   <p className="text-sm">Copy link and send to a friend</p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <LinkIcon className="h-4 w-4 text-orange-500" />
+                  <LinkIcon className="h-4 w-4 text-emerald-500" />
                   <p className="text-sm">View all your claim links</p>
                 </div>
               </>
             ) : (
               <div className="flex items-center gap-2">
-                <LinkIcon className="h-4 w-4 text-orange-500" />
+                <LinkIcon className="h-4 w-4 text-emerald-500" />
                 <p className="text-sm">Create a new gift link</p>
               </div>
             )}
@@ -212,7 +212,7 @@ export default function SendPage() {
               <Button
                 onClick={handleGrantPermissions}
                 disabled={isCreatingLink || !asset}
-                className="col-span-2 glass-button hover:bg-white/20 text-white font-mono"
+                className="col-span-2 glass-button hover:bg-white/20 text-white font-inter"
               >
                 {isCreatingLink ? 'Creating...' : 'Create link'}
               </Button>
@@ -220,13 +220,13 @@ export default function SendPage() {
               <>
                 <Button
                   onClick={copyLink}
-                  className="glass-button hover:bg-white/20 text-white font-mono"
+                  className="glass-button hover:bg-white/20 text-white font-inter"
                 >
                   {isCopying ? 'Copied ✓' : 'Copy link'}
                 </Button>
                 <Link href="/history">
                   <Button
-                    className="w-full glass-button hover:bg-white/20 text-white font-mono"
+                    className="w-full glass-button hover:bg-white/20 text-white font-inter"
                   >
                     View links
                   </Button>

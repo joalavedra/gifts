@@ -9,7 +9,7 @@ export const theme = {
     }
   },
   fonts: {
-    mono: 'var(--font-space-mono)'
+    inter: 'var(--font-space-inter)'
   },
   animations: {
     transition: 'all 0.2s ease-in-out'

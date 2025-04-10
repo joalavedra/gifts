@@ -1,21 +1,19 @@
 import './globals.css';
 import type { Metadata } from 'next';
-import { Space_Mono } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/sonner';
-import { Snowfall } from '@/components/snowfall';
 import { WagmiConfig } from '@/lib/providers/wagmi';
 import { AuthProvider } from '@/components/auth/AuthProvider';
 
-const spaceMono = Space_Mono({ 
-  weight: '400',
+const inter = Inter({ 
   subsets: ['latin'],
-  variable: '--font-space-mono',
+  variable: '--font-inter',
 });
 
 export const metadata: Metadata = {
-  title: 'GiftQuest - Spread Holiday Joy',
-  description: 'Send virtual Christmas gifts to your loved ones',
+  title: 'Email to Stables - Your Fintech Hub',
+  description: 'Send and receive payments with style',
 };
 
 export default function RootLayout({
@@ -24,7 +22,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={spaceMono.variable} suppressHydrationWarning>
+    <html lang="en" className={inter.variable} suppressHydrationWarning>
       <body>
         <ThemeProvider
           attribute="class"
@@ -34,8 +32,7 @@ export default function RootLayout({
         >
           <WagmiConfig>
             <AuthProvider>
-              <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-red-500/10 via-background to-background">
-                <Snowfall />
+              <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-emerald-500/10 via-background to-background">
                 {children}
               </div>
             </AuthProvider>

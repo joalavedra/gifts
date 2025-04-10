@@ -1,4 +1,4 @@
-export const APP_NAME = 'GiftQuest';
+export const APP_NAME = 'Email to Stables';
 export const APP_DESCRIPTION = 'Send virtual Christmas gifts to your loved ones';
 
 export const ROUTES = {

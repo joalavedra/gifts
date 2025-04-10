@@ -19,7 +19,7 @@ export function PageHeader({ title, backLink = '/' }: PageHeaderProps) {
           </Button>
         </Link>
       )}
-      <h1 className="text-xl font-mono text-orange-500">{title}</h1>
+      <h1 className="text-xl font-inter text-emerald-500">{title}</h1>
       <div className="w-10" />
     </div>
   );
