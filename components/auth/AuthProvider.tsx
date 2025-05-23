@@ -28,12 +28,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   if (!isConnected) {
     return (
-      <main className="min-h-screen flex items-center justify-center p-4">
+      <main className="min-h-screen flex flex-col items-center justify-center p-4">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-emerald-400 mb-2">Pay any email. Anywhere.</h1>
+          <p className="text-lg text-white/80">Send and receive payments from your email.</p>
+        </div>
         <Button
           onClick={connectWallet}
-          className="mx-auto flex items-center gap-2 bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white"
+          className="mx-auto flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white"
         >
-          <RapidFireLogo className="w-4 h-4" /> Sign in with Rapid Fire
+          <RapidFireLogo className="w-4 h-4" /> Send money globally now
         </Button>
       </main>
     );

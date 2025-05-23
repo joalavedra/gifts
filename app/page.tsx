@@ -51,7 +51,7 @@ export default function WelcomePage() {
       >    
         <header className="flex items-center justify-between p-3 glass-card rounded-2xl">
           <Navigation />
-          <h1 className="text-sm font-mono text-orange-500">GiftQuest</h1>
+          <h1 className="text-sm font-inter text-emerald-500">Email to Stables</h1>
           <UserBalance balance={balance as bigint ?? 0} />
         </header>
 

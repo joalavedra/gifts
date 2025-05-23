@@ -39,7 +39,7 @@ export function DepositForm() {
       </div>
 
       <div className="text-center space-y-2">
-            <div className="text-4xl font-mono">{`$ ${balance ? formatUnits(balance as bigint, 6):0}`}</div>
+            <div className="text-4xl font-inter">{`$ ${balance ? formatUnits(balance as bigint, 6):0}`}</div>
       <div className="text-sm opacity-80">Current Balance</div>
       </div>
 

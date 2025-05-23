@@ -21,20 +21,20 @@ export default function AboutPage() {
                 <ArrowLeft className="h-5 w-5" />
               </Button>
             </Link>
-            <h1 className="text-xl font-mono text-orange-500">About GiftQuest</h1>
+            <h1 className="text-xl font-inter text-emerald-500">About Email to Stables</h1>
             <div className="w-10" />
           </div>
 
           <section>
-            <h2 className="text-xl font-mono text-orange-500 mb-4">Send Your Friends a Gift! 🎁</h2>
-            <p className="text-sm font-mono text-white/80">
-              GiftQuest transforms everyday payments into gifts. Send tokens representing real-world gaming items to your friends!
+            <h2 className="text-xl font-inter text-emerald-500 mb-4">Send Stables with email! </h2>
+            <p className="text-sm font-inter text-white/80">
+              Email to Stables transforms everyday payments into stablecoins. Send tokens representing real-world gaming items to your friends!
             </p>
           </section>
 
           <section>
-            <h2 className="text-lg font-mono text-orange-500 mb-3">How it works:</h2>
-            <ol className="space-y-2 text-sm font-mono text-white/80">
+            <h2 className="text-lg font-inter text-emerald-500 mb-3">How it works:</h2>
+            <ol className="space-y-2 text-sm font-inter text-white/80">
               <li>1. Deposit USDC on Ancient8 Sepolia via the Deposit page</li>
               <li>2. Buy a token and hit send</li>
               <li>3. Share the generated claim link with a friend</li>
@@ -42,18 +42,18 @@ export default function AboutPage() {
           </section>
 
           <section>
-            <h2 className="text-lg font-mono text-orange-500 mb-3">Important Notes:</h2>
-            <ul className="space-y-2 text-sm font-mono text-white/80">
-              <li>• Anyone with the link can claim the gift, so share privately</li>
-              <li>• Unclaimed gifts can be reclaimed from your Send History</li>
+            <h2 className="text-lg font-inter text-emerald-500 mb-3">Important Notes:</h2>
+            <ul className="space-y-2 text-sm font-inter text-white/80">
+              <li>• Anyone with the link can claim the stables, so share privately</li>
+              <li>• Unclaimed stables can be reclaimed from your Send History</li>
               <li>• All tokens can always be redeemed for the underlying USDC</li>
             </ul>
           </section>
 
           <section>
-            <h2 className="text-lg font-mono text-orange-500 mb-3">Why Share?</h2>
-            <p className="text-sm font-mono text-white/80">
-              Sharing tokens is a fun way to connect and spread joy. Every token sent helps grow the GiftQuest community!
+            <h2 className="text-lg font-inter text-emerald-500 mb-3">Why Share?</h2>
+            <p className="text-sm font-inter text-white/80">
+              Sharing tokens is a fun way to connect and spread joy. Every token sent helps grow the Email to Stables community!
             </p>
           </section>
         </Card>

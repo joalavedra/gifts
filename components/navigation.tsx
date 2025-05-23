@@ -32,7 +32,7 @@ export function Navigation() {
   }, [disconnect]);
 
   const menuItems = [
-    { icon: Send, label: 'Send Gift', href: '/send' },
+    { icon: Send, label: 'Send stables', href: '/send' },
     { icon: Wallet, label: 'Deposit', href: '/deposit' },
     { icon: ArrowUpRight, label: 'Withdraw', href: '/withdraw' },
     { icon: History, label: 'History', href: '/history' },
@@ -62,14 +62,14 @@ export function Navigation() {
               onClick={item.onClick}
               className="flex items-center gap-3 py-3 hover:bg-white/10 cursor-pointer"
             >
-              <item.icon className="h-4 w-4 text-orange-500" />
-              <span className="text-sm font-mono">{item.label}</span>
+              <item.icon className="h-4 w-4 text-emerald-500" />
+              <span className="text-sm font-inter">{item.label}</span>
             </DropdownMenuItem>
           ) : (
             <Link key={index} href={item.href}>
               <DropdownMenuItem className="flex items-center gap-3 py-3 hover:bg-white/10 cursor-pointer">
-                <item.icon className="h-4 w-4 text-orange-500" />
-                <span className="text-sm font-mono">{item.label}</span>
+                <item.icon className="h-4 w-4 text-emerald-500" />
+                <span className="text-sm font-inter">{item.label}</span>
               </DropdownMenuItem>
             </Link>
           )

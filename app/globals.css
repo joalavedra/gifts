@@ -3,25 +3,25 @@
 @tailwind utilities;
 
 :root {
-  --background: 350 25% 10%;
+  --background: 150 25% 10%;
   --foreground: 0 0% 100%;
-  --card: 350 25% 15%;
+  --card: 150 25% 15%;
   --card-foreground: 0 0% 100%;
-  --popover: 350 25% 15%;
+  --popover: 150 25% 15%;
   --popover-foreground: 0 0% 100%;
-  --primary: 350 90% 60%;
+  --primary: 150 90% 40%;
   --primary-foreground: 0 0% 100%;
-  --secondary: 350 25% 20%;
+  --secondary: 150 25% 20%;
   --secondary-foreground: 0 0% 100%;
-  --muted: 350 25% 25%;
+  --muted: 150 25% 25%;
   --muted-foreground: 0 0% 70%;
-  --accent: 350 90% 60%;
+  --accent: 150 90% 40%;
   --accent-foreground: 0 0% 100%;
   --destructive: 0 100% 50%;
   --destructive-foreground: 0 0% 100%;
-  --border: 350 25% 20%;
-  --input: 350 25% 20%;
-  --ring: 350 90% 60%;
+  --border: 150 25% 20%;
+  --input: 150 25% 20%;
+  --ring: 150 90% 40%;
   --radius: 0.75rem;
 }
 
@@ -29,44 +29,29 @@ body {
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
   background-image: 
-    radial-gradient(circle at 25px 25px, rgba(255, 255, 255, 0.2) 2%, transparent 0%),
-    radial-gradient(circle at 75px 75px, rgba(255, 255, 255, 0.2) 2%, transparent 0%);
+    radial-gradient(circle at 25px 25px, rgba(0, 255, 128, 0.1) 2%, transparent 0%),
+    radial-gradient(circle at 75px 75px, rgba(0, 255, 128, 0.1) 2%, transparent 0%);
   background-size: 100px 100px;
 }
 
 .glass-card {
-  background: rgba(35, 25, 30, 0.7);
+  background: rgba(25, 35, 30, 0.7);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(0, 255, 128, 0.1);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
 .glass-button {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: all 0.2s ease-in-out;
+  background: rgba(0, 255, 128, 0.1);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 255, 128, 0.2);
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 4px 16px rgba(0, 255, 128, 0.1);
 }
 
 .glass-button:hover {
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  transform: translateY(-1px);
-}
-
-@keyframes snow {
-  0% {
-    transform: translateY(-100%);
-  }
-  100% {
-    transform: translateY(100vh);
-  }
-}
-
-.snowflake {
-  position: fixed;
-  color: white;
-  font-size: 1em;
-  opacity: 0.8;
-  animation: snow 5s linear infinite;
+  background: rgba(0, 255, 128, 0.15);
+  border: 1px solid rgba(0, 255, 128, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 255, 128, 0.15);
 }

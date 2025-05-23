@@ -1,16 +1,16 @@
 export const GIFTS = [
   {
     id: 0,
-    name: 'Candy Cane',
+    name: 'Banknote',
     price: 1,
-    emoji: '🍬',
-    description: 'Sweet peppermint treat'
+    emoji: '💵',
+    description: 'A banknote'
   },
   {
     id: 1,
-    name: 'Gingerbread',
+    name: 'Money with winds',
     price: 2,
-    emoji: '🍪',
-    description: 'Freshly baked cookie'
+    emoji: '💸',
+    description: 'A banknote with a wind'
   },
 ];

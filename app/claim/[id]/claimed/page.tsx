@@ -25,7 +25,7 @@ export default function ClaimedPage({ params }: { params: { hash: string } }) {
                 <ArrowLeft className="h-5 w-5" />
               </Button>
             </Link>
-            <h1 className="text-xl font-mono text-orange-500">Present Claimed!</h1>
+            <h1 className="text-xl font-inter text-emerald-500">Present Claimed!</h1>
             <div className="w-10" />
           </div>
           
@@ -49,7 +49,7 @@ export default function ClaimedPage({ params }: { params: { hash: string } }) {
               href={explorerUrl}
               target="_blank"
               rel="noopener noreferrer" 
-              className="text-sm font-mono text-white/80 text-center flex items-center justify-center gap-2 hover:text-white transition-colors"
+              className="text-sm font-inter text-white/80 text-center flex items-center justify-center gap-2 hover:text-white transition-colors"
             >
               View transaction on Explorer <ExternalLink className="h-4 w-4" />
             </a>
@@ -57,7 +57,7 @@ export default function ClaimedPage({ params }: { params: { hash: string } }) {
             <div className="grid grid-cols-2 gap-4">
               <Link href="/" className="col-span-2">
                 <Button 
-                  className="w-full glass-button hover:bg-white/20 text-white py-6 font-mono flex items-center justify-center gap-2"
+                  className="w-full glass-button hover:bg-white/20 text-white py-6 font-inter flex items-center justify-center gap-2"
                 >
                   <Gift className="h-5 w-5" />
                   Send Your Own Gift
@@ -65,8 +65,8 @@ export default function ClaimedPage({ params }: { params: { hash: string } }) {
               </Link>
             </div>
 
-            <p className="text-sm text-center text-white/60 font-mono">
-              Thanks for using GiftQuest!
+            <p className="text-sm text-center text-white/60 font-inter">
+              Thanks for using Email to Stables!
             </p>
           </div>
         </Card>

@@ -63,17 +63,17 @@ export default function HistoryPage() {
         className="max-w-md mx-auto"
       >
         <Card className="glass-card border-none p-8 space-y-6">
-          <PageHeader title="Gift History" />
+          <PageHeader title="Transfer History" />
 
-          <p className="text-sm font-mono text-white/80">
+          <p className="text-sm font-inter text-white/80">
             Below are claim links you've created. Tap the link to copy, then send to a friend. 
             Anyone with the link can claim. You can also remove links from history.
           </p>
 
           <div className="space-y-4">
             {links.length === 0 ? (
-              <div className="text-center text-white/60 py-8 font-mono">
-                No gifts sent yet
+              <div className="text-center text-white/60 py-8 font-inter">
+                No stables sent yet
               </div>
             ) : (
               links.map((item, index) => (
@@ -81,12 +81,12 @@ export default function HistoryPage() {
                   key={index}
                   className="glass-button rounded-lg p-4 space-y-3"
                 >
-                  <div className="flex items-center gap-2 text-white/80 font-mono">
+                  <div className="flex items-center gap-2 text-white/80 font-inter">
                     <button 
                       className="p-2 hover:bg-white/10 rounded-lg transition-colors"
                       onClick={() => copyLink(item.link)}
                     >
-                      <Copy className="h-4 w-4 text-orange-500" />
+                      <Copy className="h-4 w-4 text-emerald-500" />
                     </button>
                     <span>{item.asset}</span>
                     <span className="text-sm opacity-60">{formatDate(item.timestamp)}</span>
@@ -94,7 +94,7 @@ export default function HistoryPage() {
                       className="ml-auto p-2 hover:bg-white/10 rounded-lg transition-colors"
                       onClick={() => removeLink(item.link)}
                     >
-                      <X className="h-4 w-4 text-orange-500" />
+                      <X className="h-4 w-4 text-emerald-500" />
                     </button>
                   </div>
                 </div>
@@ -103,7 +103,7 @@ export default function HistoryPage() {
           </div>
 
           {links.length > 0 && (
-            <p className="text-xs text-center text-white/60 font-mono">
+            <p className="text-xs text-center text-white/60 font-inter">
               Links expire after 24 hours
             </p>
           )}

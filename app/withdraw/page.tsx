@@ -55,28 +55,28 @@ export default function WithdrawPage() {
                 <ArrowLeft className="h-5 w-5" />
               </Button>
             </Link>
-            <h1 className="text-xl font-mono text-orange-500">Withdraw USDC</h1>
+            <h1 className="text-xl font-inter text-emerald-500">Withdraw USDC</h1>
             <div className="w-10" />
           </div>
 
           <div className="text-center space-y-2">
-            <div className="text-4xl font-mono">{`$ ${balance ? formatUnits(balance as bigint, 6):0}`}</div>
-          <div className="text-sm font-mono text-white/60">Available Balance</div>
+            <div className="text-4xl font-inter">{`$ ${balance ? formatUnits(balance as bigint, 6):0}`}</div>
+          <div className="text-sm font-inter text-white/60">Available Balance</div>
           </div>
 
           <div className="space-y-4">
             <div className="space-y-2">
-              <label className="text-sm font-mono">USDC Address (SEPOLIA ANCIENT8)</label>
+              <label className="text-sm font-inter">USDC Address (SEPOLIA ANCIENT8)</label>
               <Input
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 placeholder="Enter your USDC address"
-                className="glass-button border-white/20 text-white font-mono placeholder:text-white/40"
+                className="glass-button border-white/20 text-white font-inter placeholder:text-white/40"
               />
             </div>
 
             <Button 
-              className="w-full glass-button hover:bg-white/20 text-white py-6 font-mono disabled:opacity-50"
+              className="w-full glass-button hover:bg-white/20 text-white py-6 font-inter disabled:opacity-50"
               onClick={handleWithdraw}
               disabled={isPending}
             >

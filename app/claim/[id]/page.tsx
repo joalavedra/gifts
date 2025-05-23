@@ -30,13 +30,13 @@ export default function ClaimPage({ params }: { params: { id: string } }) {
         });
 
         if (!response.ok) {
-          throw new Error('Failed to load gift info');
+          throw new Error('Failed to load stables info');
         }
 
         const { decryptedData } = await response.json();
         setGiftInfo(decryptedData);
       } catch (error) {
-        toast.error('Invalid gift link');
+        toast.error('Invalid stable link');
         router.push('/invalid');
       } finally {
         setIsInitialLoading(false);
@@ -66,14 +66,14 @@ export default function ClaimPage({ params }: { params: { id: string } }) {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to claim gift');
+        throw new Error('Failed to claim stable');
       }
 
-      toast.success("Gift claimed successfully!");
+      toast.success("Stable claimed successfully!");
       const { hash } = await response.json();
       router.push(`/claim/${params.id}/claimed?hash=${hash}`);
     } catch (error) {
-      toast.error('Failed to claim gift');
+      toast.error('Failed to claim stable');
       setIsClaimLoading(false);
     }
   };
@@ -83,7 +83,7 @@ export default function ClaimPage({ params }: { params: { id: string } }) {
       <main className="min-h-screen bg-[#E60012] text-white p-4">
         <div className="max-w-md mx-auto">
           <Card className="bg-[#ffffff20] border-none p-8 text-center">
-            <div className="animate-pulse">Loading gift details...</div>
+            <div className="animate-pulse">Loading stablecoins details...</div>
           </Card>
         </div>
       </main>
@@ -145,7 +145,7 @@ export default function ClaimPage({ params }: { params: { id: string } }) {
 
           <div className="text-xs opacity-80">
             <Link href="/" className="hover:opacity-100 transition-opacity">
-              Want to send your own gifts? Click here
+              Want to send stables? Click here
             </Link>
           </div>
         </Card>

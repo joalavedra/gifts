@@ -10,8 +10,8 @@ import { useAccount, useReadContract } from 'wagmi';
 import { CONTRACTS } from '@/lib/contracts/config';
 
 const GIFTS: Omit<Gift, 'quantity'>[] = [
-  { id: 0, name: 'Candy Cane', price: 1, emoji: '🍬', owned: 0 },
-  { id: 1, name: 'Gingerbread', price: 2, emoji: '🍪', owned: 0 },
+  { id: 0, name: 'Banknote', price: 1, emoji: '💵', owned: 0 },
+  { id: 1, name: 'Money with winds', price: 2, emoji: '💸', owned: 0 },
 ];
 
 interface GiftDisplayProps {
@@ -76,7 +76,7 @@ export function GiftDisplay({ onGiftChange }: GiftDisplayProps) {
   return (
     <div className="relative">
       <Card className="glass-card border-none p-8">
-        <div className="text-sm font-mono mb-6 text-orange-500">
+        <div className="text-sm font-inter mb-6 text-emerald-500">
           {currentGift.name} = ${currentGift.price}
         </div>
 
@@ -99,7 +99,7 @@ export function GiftDisplay({ onGiftChange }: GiftDisplayProps) {
                 const newQuantity = parseInt(e.target.value) || 1;
                 handleQuantityChange(newQuantity);
               }}
-              className="w-20 text-center bg-white/10 border-white/20 text-white text-xl h-14 font-mono"
+              className="w-20 text-center bg-white/10 border-white/20 text-white text-xl h-14 font-inter"
               min="1"
             />
           </div>
@@ -114,7 +114,7 @@ export function GiftDisplay({ onGiftChange }: GiftDisplayProps) {
           </Button>
         </div>
 
-        <div className="mt-6 text-xs font-mono text-white/60">
+        <div className="mt-6 text-xs font-inter text-white/60">
           You have: {currentGift.owned}
         </div>
       </Card>
