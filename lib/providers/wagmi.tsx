@@ -1,14 +1,14 @@
 "use client";
 
 import { WagmiProvider, createConfig, http } from 'wagmi';
-import { ancient8Sepolia } from 'wagmi/chains';
+import { ancient8Sepolia, sepolia } from 'wagmi/chains';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { injected } from 'wagmi/connectors'
 
 const config = createConfig({
-  chains: [ancient8Sepolia],
+  chains: [sepolia],
   transports: {
-    [ancient8Sepolia.id]: http()
+    [sepolia.id]: http()
   },
   ssr: true,
   connectors: [
