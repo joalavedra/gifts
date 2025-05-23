@@ -6,9 +6,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { injected } from 'wagmi/connectors'
 
 const config = createConfig({
-  chains: [sepolia],
+  chains: [ancient8Sepolia],
   transports: {
-    [sepolia.id]: http()
+    [ancient8Sepolia.id]: http()
   },
   ssr: true,
   connectors: [
