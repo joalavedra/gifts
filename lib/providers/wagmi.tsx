@@ -1,7 +1,7 @@
 "use client";
 
 import { WagmiProvider, createConfig, http } from 'wagmi';
-import { ancient8Sepolia } from 'wagmi/chains';
+import { ancient8Sepolia, sepolia } from 'wagmi/chains';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { injected } from 'wagmi/connectors'
 
